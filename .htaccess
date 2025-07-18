@@ -36,6 +36,7 @@ RewriteRule ^logs/ - [F,L]
 RewriteRule ^test\.php$ - [L]
 RewriteRule ^simple\.php$ - [L]
 RewriteRule ^home\.php$ - [L]
+RewriteRule ^setup\.php$ - [L]
 
 # Handle Frontend Routes (Static Files)
 RewriteCond %{REQUEST_URI} ^/frontend/
