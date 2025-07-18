@@ -94,6 +94,11 @@ class Router {
         // No base path removal needed - running in root directory
         $path = $path ?: '/';
         
+        // Normalize path - remove trailing slash except for root
+        if ($path !== '/' && substr($path, -1) === '/') {
+            $path = rtrim($path, '/');
+        }
+        
         foreach ($this->routes as $route) {
             if ($route['method'] === $method && $this->matchPath($route['path'], $path)) {
                 // Apply middleware
