@@ -84,6 +84,23 @@ class Database {
     }
 
     /**
+     * Prepare a statement
+     */
+    public function prepare($sql) {
+        try {
+            $pdo = $this->connect();
+            return $pdo->prepare($sql);
+        } catch (PDOException $e) {
+            if (DEBUG_MODE) {
+                error_log("Statement preparation failed: " . $e->getMessage());
+                throw new Exception("Statement preparation failed: " . $e->getMessage());
+            } else {
+                throw new Exception("Statement preparation failed");
+            }
+        }
+    }
+
+    /**
      * Fetch all results
      */
     public function fetchAll($sql, $params = []) {

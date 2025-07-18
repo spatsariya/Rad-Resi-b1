@@ -36,6 +36,13 @@ class BaseController {
     }
     
     /**
+     * Return JSON response (alias)
+     */
+    protected function jsonResponse($data, $status = 200) {
+        return $this->json($data, $status);
+    }
+    
+    /**
      * Redirect to a URL
      */
     protected function redirect($url) {
@@ -47,10 +54,29 @@ class BaseController {
      * Validate CSRF token
      */
     protected function validateCSRF() {
-        $token = $_POST['csrf_token'] ?? '';
-        if (!validateCSRFToken($token)) {
-            $this->json(['error' => 'Invalid CSRF token'], 403);
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
+        
+        $token = $_POST['csrf_token'] ?? '';
+        $sessionToken = $_SESSION['csrf_token'] ?? '';
+        
+        return !empty($token) && hash_equals($sessionToken, $token);
+    }
+    
+    /**
+     * Generate CSRF token
+     */
+    protected function generateCSRFToken() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        if (!isset($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+        
+        return $_SESSION['csrf_token'];
     }
     
     /**
