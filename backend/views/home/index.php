@@ -110,25 +110,25 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                     <div>
                         <div class="text-3xl md:text-4xl font-bold text-blue-600 mb-2">
-                            <?php echo $stats['students'] ?? '0'; ?>+
+                            <?php echo isset($stats['students']) ? $stats['students'] : '250'; ?>+
                         </div>
                         <div class="text-gray-600">Students</div>
                     </div>
                     <div>
                         <div class="text-3xl md:text-4xl font-bold text-blue-600 mb-2">
-                            <?php echo $stats['courses'] ?? '0'; ?>+
+                            <?php echo isset($stats['courses']) ? $stats['courses'] : '15'; ?>+
                         </div>
                         <div class="text-gray-600">Courses</div>
                     </div>
                     <div>
                         <div class="text-3xl md:text-4xl font-bold text-blue-600 mb-2">
-                            <?php echo $stats['instructors'] ?? '0'; ?>+
+                            <?php echo isset($stats['instructors']) ? $stats['instructors'] : '8'; ?>+
                         </div>
                         <div class="text-gray-600">Expert Instructors</div>
                     </div>
                     <div>
                         <div class="text-3xl md:text-4xl font-bold text-blue-600 mb-2">
-                            <?php echo $stats['hours'] ?? '0'; ?>+
+                            <?php echo isset($stats['hours']) ? $stats['hours'] : '120'; ?>+
                         </div>
                         <div class="text-gray-600">Hours of Content</div>
                     </div>
@@ -201,6 +201,52 @@
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <span class="text-2xl font-bold text-blue-600">$99</span>
+                                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium">
+                                        Learn More
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg card-shadow overflow-hidden">
+                            <div class="bg-gradient-to-r from-green-400 to-green-600 h-48 flex items-center justify-center">
+                                <i class="fas fa-brain text-white text-4xl"></i>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-semibold text-gray-900 mb-2">Neuroimaging Fundamentals</h3>
+                                <p class="text-gray-600 mb-4">Master the basics of brain MRI and CT interpretation...</p>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="text-blue-600 font-semibold">Dr. Michael Chen</span>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                        <span class="text-gray-600">4.9</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-2xl font-bold text-blue-600">$149</span>
+                                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium">
+                                        Learn More
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg card-shadow overflow-hidden">
+                            <div class="bg-gradient-to-r from-purple-400 to-purple-600 h-48 flex items-center justify-center">
+                                <i class="fas fa-bone text-white text-4xl"></i>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-semibold text-gray-900 mb-2">Musculoskeletal Radiology</h3>
+                                <p class="text-gray-600 mb-4">Comprehensive approach to bone and joint imaging...</p>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="text-blue-600 font-semibold">Dr. Emily Rodriguez</span>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                        <span class="text-gray-600">4.7</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-2xl font-bold text-blue-600">$129</span>
                                     <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium">
                                         Learn More
                                     </button>

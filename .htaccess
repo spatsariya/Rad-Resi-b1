@@ -32,6 +32,11 @@ RewriteRule ^config/ - [F,L]
 RewriteRule ^database/ - [F,L]
 RewriteRule ^logs/ - [F,L]
 
+# Test files - allow direct access for debugging
+RewriteRule ^test\.php$ - [L]
+RewriteRule ^simple\.php$ - [L]
+RewriteRule ^home\.php$ - [L]
+
 # Handle Frontend Routes (Static Files)
 RewriteCond %{REQUEST_URI} ^/frontend/
 RewriteRule ^frontend/(.*)$ frontend/$1 [L]
@@ -85,5 +90,5 @@ RewriteRule ^(.*)$ index.php [QSA,L]
 </IfModule>
 
 # Error Pages
-ErrorDocument 404 /views/errors/404.php
-ErrorDocument 500 /views/errors/500.php
+ErrorDocument 404 /simple.php
+ErrorDocument 500 /simple.php

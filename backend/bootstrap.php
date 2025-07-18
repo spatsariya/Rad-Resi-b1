@@ -9,8 +9,10 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Load configuration
-require_once __DIR__ . '/../config/config.php';
+// Configuration should already be loaded by index.php
+if (!defined('DB_HOST')) {
+    throw new Exception("Configuration not loaded");
+}
 
 // Autoloader for classes
 spl_autoload_register(function ($class) {
