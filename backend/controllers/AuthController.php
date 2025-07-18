@@ -84,7 +84,7 @@ class AuthController extends BaseController
             // Determine redirect URL based on role
             $redirectUrl = '/dashboard';
             if ($user['role'] === 'admin' || $user['role'] === 'instructor') {
-                $redirectUrl = '/p/admin';
+                $redirectUrl = '/admin';
             }
             
             $this->jsonResponse([

@@ -91,12 +91,7 @@ class Router {
         $method = $_SERVER['REQUEST_METHOD'];
         $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         
-        // Remove base path if running in subdirectory
-        $basePath = '/p'; // Adjust based on your hosting setup
-        if (strpos($path, $basePath) === 0) {
-            $path = substr($path, strlen($basePath));
-        }
-        
+        // No base path removal needed - running in root directory
         $path = $path ?: '/';
         
         foreach ($this->routes as $route) {
