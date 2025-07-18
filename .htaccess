@@ -41,9 +41,9 @@ RewriteRule ^home\.php$ - [L]
 RewriteCond %{REQUEST_URI} ^/frontend/
 RewriteRule ^frontend/(.*)$ frontend/$1 [L]
 
-# Handle Admin Routes - route to index.php
-RewriteCond %{REQUEST_URI} ^/admin
-RewriteRule ^admin/(.*)$ index.php [QSA,L]
+# Handle Admin Routes - route to index.php (with and without trailing slash)
+RewriteRule ^admin/?$ index.php [QSA,L]
+RewriteRule ^admin/(.+)$ index.php [QSA,L]
 
 # Handle API Routes
 RewriteCond %{REQUEST_URI} ^/api/
