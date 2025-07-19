@@ -435,22 +435,55 @@ class NotesChapter
     public function getMainChapters()
     {
         try {
-            $sql = "
-                SELECT 
-                    id,
-                    chapter_name,
-                    display_order
-                FROM notes_chapters 
-                WHERE (parent_id IS NULL OR parent_id = 0) 
-                AND status = 'active'
-                ORDER BY display_order ASC, chapter_name ASC
-            ";
+            // First check if parent_id column exists
+            $columns = $this->db->query("SHOW COLUMNS FROM notes_chapters LIKE 'parent_id'");
+            
+            if (empty($columns)) {
+                // If parent_id column doesn't exist, return all chapters
+                $sql = "
+                    SELECT 
+                        id,
+                        chapter_name,
+                        display_order
+                    FROM notes_chapters 
+                    WHERE status = 'active'
+                    ORDER BY display_order ASC, chapter_name ASC
+                ";
+            } else {
+                // If parent_id column exists, filter by it
+                $sql = "
+                    SELECT 
+                        id,
+                        chapter_name,
+                        display_order
+                    FROM notes_chapters 
+                    WHERE (parent_id IS NULL OR parent_id = 0) 
+                    AND status = 'active'
+                    ORDER BY display_order ASC, chapter_name ASC
+                ";
+            }
             
             return $this->db->query($sql);
             
         } catch (Exception $e) {
             error_log("Get main chapters error: " . $e->getMessage());
-            throw new Exception("Error getting main chapters: " . $e->getMessage());
+            
+            // If there's still an error, try a basic query without parent_id
+            try {
+                $sql = "
+                    SELECT 
+                        id,
+                        chapter_name,
+                        display_order
+                    FROM notes_chapters 
+                    WHERE status = 'active'
+                    ORDER BY display_order ASC, chapter_name ASC
+                ";
+                return $this->db->query($sql);
+            } catch (Exception $e2) {
+                error_log("Fallback query also failed: " . $e2->getMessage());
+                throw new Exception("Error getting main chapters: " . $e2->getMessage());
+            }
         }
     }
 }

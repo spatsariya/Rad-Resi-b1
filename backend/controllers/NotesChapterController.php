@@ -397,7 +397,9 @@ class NotesChapterController extends BaseController
         }
         
         try {
+            error_log("Getting main chapters...");
             $chapters = $this->notesChapterModel->getMainChapters();
+            error_log("Found " . count($chapters) . " main chapters");
             $this->jsonResponse(['success' => true, 'chapters' => $chapters]);
             
         } catch (Exception $e) {
