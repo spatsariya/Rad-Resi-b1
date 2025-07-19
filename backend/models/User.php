@@ -252,18 +252,33 @@ class User
             $per_page = $filters['per_page'] ?? 20;
             $offset = ($page - 1) * $per_page;
             
-            $sql = "
-                SELECT u.*, 
-                       COUNT(DISTINCT m_received.id) as messages_received,
-                       COUNT(DISTINCT ci.id) as interactions_count
-                FROM users u
-                LEFT JOIN messages m_received ON u.id = m_received.recipient_id
-                LEFT JOIN contact_interactions ci ON u.id = ci.user_id
-                $whereClause
-                GROUP BY u.id
-                ORDER BY u.created_at DESC
-                LIMIT :limit OFFSET :offset
-            ";
+            // Check if the messaging tables exist, if not use simpler query
+            $tablesExist = $this->checkMessagingTables();
+            
+            if ($tablesExist) {
+                $sql = "
+                    SELECT u.*, 
+                           COUNT(DISTINCT m_received.id) as messages_received,
+                           COUNT(DISTINCT ci.id) as interactions_count
+                    FROM users u
+                    LEFT JOIN messages m_received ON u.id = m_received.recipient_id
+                    LEFT JOIN contact_interactions ci ON u.id = ci.user_id
+                    $whereClause
+                    GROUP BY u.id
+                    ORDER BY u.created_at DESC
+                    LIMIT :limit OFFSET :offset
+                ";
+            } else {
+                $sql = "
+                    SELECT u.*, 
+                           0 as messages_received,
+                           0 as interactions_count
+                    FROM users u
+                    $whereClause
+                    ORDER BY u.created_at DESC
+                    LIMIT :limit OFFSET :offset
+                ";
+            }
             
             $stmt = $this->db->prepare($sql);
             
@@ -337,6 +352,25 @@ class User
         } catch (PDOException $e) {
             error_log("Get user stats error: " . $e->getMessage());
             return [];
+        }
+    }
+    
+    /**
+     * Check if messaging tables exist in the database
+     */
+    private function checkMessagingTables()
+    {
+        try {
+            $stmt = $this->db->query("SHOW TABLES LIKE 'messages'");
+            $messagesExist = $stmt->rowCount() > 0;
+            
+            $stmt = $this->db->query("SHOW TABLES LIKE 'contact_interactions'");
+            $interactionsExist = $stmt->rowCount() > 0;
+            
+            return $messagesExist && $interactionsExist;
+        } catch (PDOException $e) {
+            error_log("Check messaging tables error: " . $e->getMessage());
+            return false;
         }
     }
 }
