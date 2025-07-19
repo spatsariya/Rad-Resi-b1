@@ -2,6 +2,7 @@
 // Test script to check chapters table and parent_id column
 
 try {
+    include 'config/config.php';
     include 'backend/core/Database.php';
     $db = Database::getInstance();
     
