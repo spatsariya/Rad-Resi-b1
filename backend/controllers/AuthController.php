@@ -126,13 +126,31 @@ class AuthController extends BaseController
             return;
         }
         
+        // Debug session and CSRF information
+        $debugInfo = [
+            'session_id' => session_id(),
+            'session_status' => session_status(),
+            'session_csrf_token' => $_SESSION['csrf_token'] ?? 'NOT SET',
+            'post_csrf_token' => $_POST['csrf_token'] ?? 'NOT SET',
+            'all_session_data' => $_SESSION,
+            'all_post_data' => $_POST
+        ];
+        
+        // Log debug info
+        error_log("Registration Debug: " . json_encode($debugInfo));
+        
         // Validate CSRF token
         if (!$this->validateCSRF()) {
             // Add more detailed error for debugging
             $token = $_POST['csrf_token'] ?? 'missing';
             $sessionToken = $_SESSION['csrf_token'] ?? 'missing';
             error_log("CSRF validation failed. POST token: " . substr($token, 0, 10) . "..., Session token: " . substr($sessionToken, 0, 10) . "...");
-            $this->jsonResponse(['error' => 'Invalid CSRF token. Please refresh the page and try again.'], 403);
+            
+            // Include debug info in response for testing
+            $this->jsonResponse([
+                'error' => 'Invalid CSRF token. Please refresh the page and try again.',
+                'debug' => $debugInfo  // Remove this in production
+            ], 403);
             return;
         }
         
