@@ -2,16 +2,13 @@
 require_once __DIR__ . '/config/config.php';
 
 try {
-    $mysqli = new mysqli(
-        $config['db']['host'], 
-        $config['db']['username'], 
-        $config['db']['password'], 
-        $config['db']['database']
-    );
+    $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
     
     if ($mysqli->connect_error) {
         throw new Exception("Connection failed: " . $mysqli->connect_error);
     }
+    
+    echo "Connected to database successfully!\n";
     
     $sql = file_get_contents(__DIR__ . '/contact_management_schema.sql');
     
