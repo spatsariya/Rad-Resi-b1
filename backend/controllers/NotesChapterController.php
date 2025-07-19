@@ -92,6 +92,9 @@ class NotesChapterController extends BaseController
      */
     public function getChapterDetails()
     {
+        // Add headers for proper JSON response
+        header('Content-Type: application/json');
+        
         if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_role'], ['admin', 'instructor'])) {
             $this->jsonResponse(['success' => false, 'message' => 'Unauthorized']);
             return;
@@ -104,7 +107,10 @@ class NotesChapterController extends BaseController
         }
         
         try {
+            error_log("Getting chapter details for ID: " . $chapter_id);
             $chapter = $this->notesChapterModel->findById($chapter_id);
+            error_log("Chapter details result: " . json_encode($chapter));
+            
             if (!$chapter) {
                 $this->jsonResponse(['success' => false, 'message' => 'Chapter not found']);
                 return;
@@ -114,6 +120,7 @@ class NotesChapterController extends BaseController
             
         } catch (Exception $e) {
             error_log("Get chapter details error: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
             
             // Provide specific error messages
             if (strpos($e->getMessage(), "Notes chapters table does not exist") !== false) {

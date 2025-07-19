@@ -15,7 +15,8 @@ class NotesChapter
     public function checkTable()
     {
         try {
-            $result = $this->db->query("SHOW TABLES LIKE 'notes_chapters'");
+            $stmt = $this->db->query("SHOW TABLES LIKE 'notes_chapters'");
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return !empty($result);
         } catch (Exception $e) {
             return false;
@@ -126,12 +127,30 @@ class NotesChapter
     public function findById($id)
     {
         try {
-            $sql = "SELECT * FROM notes_chapters WHERE id = :id";
+            // First check if parent_id column exists
+            $stmt = $this->db->query("SHOW COLUMNS FROM notes_chapters LIKE 'parent_id'");
+            $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            if (empty($columns)) {
+                // If parent_id column doesn't exist, select without it
+                $sql = "SELECT id, chapter_name, sub_chapter_name, description, thumbnail_image, display_order, status, created_at, updated_at FROM notes_chapters WHERE id = :id";
+            } else {
+                // If parent_id column exists, include it in the selection
+                $sql = "SELECT * FROM notes_chapters WHERE id = :id";
+            }
+            
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
             
-            return $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            // If parent_id column doesn't exist, add it as null for consistency
+            if (empty($columns) && $result) {
+                $result['parent_id'] = null;
+            }
+            
+            return $result;
             
         } catch (PDOException $e) {
             // Check if error is due to missing table
