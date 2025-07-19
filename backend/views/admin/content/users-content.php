@@ -278,7 +278,47 @@
                 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Specialization</label>
-                    <input type="text" id="editSpecialization" name="specialization"
+                    <select id="editSpecialization" name="specialization"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Select Specialization</option>
+                        <option value="Diagnostic Radiology">Diagnostic Radiology</option>
+                        <option value="Interventional Radiology">Interventional Radiology</option>
+                        <option value="Nuclear Medicine">Nuclear Medicine</option>
+                        <option value="Radiation Oncology">Radiation Oncology</option>
+                        <option value="Neuroradiology">Neuroradiology</option>
+                        <option value="Pediatric Radiology">Pediatric Radiology</option>
+                        <option value="Musculoskeletal Radiology">Musculoskeletal Radiology</option>
+                        <option value="Cardiothoracic Radiology">Cardiothoracic Radiology</option>
+                        <option value="Abdominal Radiology">Abdominal Radiology</option>
+                        <option value="Breast Imaging">Breast Imaging</option>
+                        <option value="Emergency Radiology">Emergency Radiology</option>
+                        <option value="Radiology Resident">Radiology Resident</option>
+                        <option value="Medical Student">Medical Student</option>
+                        <option value="Radiologic Technologist">Radiologic Technologist</option>
+                        <option value="Other Healthcare Professional">Other Healthcare Professional</option>
+                    </select>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Experience Years</label>
+                        <input type="number" id="editExperienceYears" name="experience_years" min="0" max="50"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Newsletter</label>
+                        <select id="editNewsletter" name="newsletter"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Institution</label>
+                    <input type="text" id="editInstitution" name="institution"
+                           placeholder="Medical school, hospital, or organization"
                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                 </div>
                 
@@ -287,6 +327,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
                         <select id="editRole" name="role" required
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                            <option value="user">User</option>
                             <option value="student">Student</option>
                             <option value="instructor">Instructor</option>
                             <option value="admin">Admin</option>
@@ -387,6 +428,9 @@ async function editUser(userId) {
             document.getElementById('editEmail').value = user.email || '';
             document.getElementById('editPhone').value = user.phone || '';
             document.getElementById('editSpecialization').value = user.specialization || '';
+            document.getElementById('editExperienceYears').value = user.experience_years || 0;
+            document.getElementById('editInstitution').value = user.institution || '';
+            document.getElementById('editNewsletter').value = user.newsletter || 0;
             document.getElementById('editRole').value = user.role || '';
             document.getElementById('editStatus').value = user.status || '';
             

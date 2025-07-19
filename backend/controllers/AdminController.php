@@ -597,7 +597,9 @@ class AdminController extends BaseController
         try {
             $stmt = $this->db->prepare("
                 SELECT id, email, first_name, last_name, role, status, specialization, 
-                       phone, COALESCE(profile_picture, avatar) as profile_picture, experience_years, created_at, last_login
+                       phone, institution, experience_years, newsletter,
+                       COALESCE(profile_picture, avatar) as profile_picture, 
+                       created_at, last_login
                 FROM users WHERE id = ?
             ");
             $stmt->execute([$userId]);
@@ -630,6 +632,9 @@ class AdminController extends BaseController
         $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
         $phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_STRING);
         $specialization = filter_input(INPUT_POST, 'specialization', FILTER_SANITIZE_STRING);
+        $experienceYears = filter_input(INPUT_POST, 'experience_years', FILTER_VALIDATE_INT);
+        $institution = filter_input(INPUT_POST, 'institution', FILTER_SANITIZE_STRING);
+        $newsletter = filter_input(INPUT_POST, 'newsletter', FILTER_VALIDATE_INT);
         $role = filter_input(INPUT_POST, 'role', FILTER_SANITIZE_STRING);
         $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_STRING);
         
@@ -643,10 +648,15 @@ class AdminController extends BaseController
             $stmt = $this->db->prepare("
                 UPDATE users SET 
                     first_name = ?, last_name = ?, email = ?, phone = ?, 
-                    specialization = ?, role = ?, status = ?
+                    specialization = ?, experience_years = ?, institution = ?, 
+                    newsletter = ?, role = ?, status = ?
                 WHERE id = ?
             ");
-            $result = $stmt->execute([$firstName, $lastName, $email, $phone, $specialization, $role, $status, $userId]);
+            $result = $stmt->execute([
+                $firstName, $lastName, $email, $phone, $specialization, 
+                $experienceYears ?: 0, $institution, $newsletter ?: 0, 
+                $role, $status, $userId
+            ]);
             
             if ($result) {
                 echo json_encode(['success' => true, 'message' => 'User updated successfully']);
