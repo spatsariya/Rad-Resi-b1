@@ -50,6 +50,10 @@ class ContactController extends BaseController {
         
         // Prepare data for view
         $data = [
+            'title' => 'Contact List - User Management',
+            'description' => 'Manage contacts and communications with all users',
+            'page_title' => 'Contact List',
+            'page_description' => 'Manage contacts and communications with all users',
             'contacts' => $contactsData['contacts'],
             'total_contacts' => $total_contacts,
             'current_page' => $current_page,
@@ -63,7 +67,7 @@ class ContactController extends BaseController {
             'contact_groups' => $contact_groups
         ];
         
-        $this->view('admin/contacts', $data);
+        $this->view('admin/generic-page', $data);
     }
     
     public function getUserInfo() {
