@@ -14,7 +14,7 @@ try {
     echo "<h2>Notes Table Setup</h2>";
     
     // Check if notes table exists
-    $result = $db->query("SHOW TABLES LIKE 'notes'");
+    $result = $db->fetchAll("SHOW TABLES LIKE 'notes'");
     if (!empty($result)) {
         echo "<p style='color: orange;'>⚠️ Notes table already exists. This will drop and recreate it.</p>";
         echo "<p><strong>WARNING:</strong> This will delete all existing notes data!</p>";
@@ -48,7 +48,7 @@ try {
         }
         
         try {
-            $db->execute($statement);
+            $db->query($statement);
             $successCount++;
             
             // Show what we're executing (first 50 chars)
@@ -74,28 +74,27 @@ try {
     echo "</ul>";
     
     // Verify table creation
-    $result = $db->query("SHOW TABLES LIKE 'notes'");
+    $result = $db->fetchAll("SHOW TABLES LIKE 'notes'");
     if (!empty($result)) {
         echo "<p style='color: green; font-weight: bold;'>✅ Notes table successfully created!</p>";
         
         // Count records
-        $count = $db->query("SELECT COUNT(*) as count FROM notes");
+        $count = $db->fetch("SELECT COUNT(*) as count FROM notes");
         if (!empty($count)) {
-            echo "<p>📊 Total notes inserted: " . $count[0]['count'] . "</p>";
+            echo "<p>📊 Total notes inserted: " . $count['count'] . "</p>";
         }
         
         // Test the statistics view
         try {
-            $stats = $db->query("SELECT * FROM notes_statistics");
+            $stats = $db->fetch("SELECT * FROM notes_statistics");
             if (!empty($stats)) {
-                $stat = $stats[0];
                 echo "<h4>📈 Database Statistics:</h4>";
                 echo "<ul>";
-                echo "<li>Total Notes: " . $stat['total_notes'] . "</li>";
-                echo "<li>Active Notes: " . $stat['active_notes'] . "</li>";
-                echo "<li>Premium Notes: " . $stat['premium_notes'] . "</li>";
-                echo "<li>Total Views: " . number_format($stat['total_views']) . "</li>";
-                echo "<li>Chapters with Notes: " . $stat['chapters_with_notes'] . "</li>";
+                echo "<li>Total Notes: " . $stats['total_notes'] . "</li>";
+                echo "<li>Active Notes: " . $stats['active_notes'] . "</li>";
+                echo "<li>Premium Notes: " . $stats['premium_notes'] . "</li>";
+                echo "<li>Total Views: " . number_format($stats['total_views']) . "</li>";
+                echo "<li>Chapters with Notes: " . $stats['chapters_with_notes'] . "</li>";
                 echo "</ul>";
             }
         } catch (Exception $e) {
