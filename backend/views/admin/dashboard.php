@@ -45,6 +45,78 @@
 			transition: all 0.3s ease-in-out;
 		}
 		
+		/* Collapsed sidebar styles */
+		.sidebar-collapsed {
+			width: 4rem; /* 64px */
+		}
+		
+		.sidebar-expanded {
+			width: 18rem; /* 288px */
+		}
+		
+		/* Hide text when collapsed */
+		.sidebar-collapsed .sidebar-text {
+			opacity: 0;
+			transform: translateX(-10px);
+			transition: all 0.2s ease-in-out;
+		}
+		
+		.sidebar-expanded .sidebar-text {
+			opacity: 1;
+			transform: translateX(0);
+			transition: all 0.3s ease-in-out 0.1s;
+		}
+		
+		/* Submenu styles */
+		.submenu {
+			max-height: 0;
+			overflow: hidden;
+			transition: max-height 0.3s ease-in-out;
+		}
+		
+		.submenu.active {
+			max-height: 500px;
+		}
+		
+		/* Logo scaling */
+		.sidebar-collapsed .logo-admin {
+			height: 2rem;
+		}
+		
+		.sidebar-expanded .logo-admin {
+			height: 2rem;
+		}
+		
+		/* Icon centering when collapsed */
+		.sidebar-collapsed .menu-item {
+			justify-content: center;
+		}
+		
+		.sidebar-expanded .menu-item {
+			justify-content: flex-start;
+		}
+		
+		/* Tooltip for collapsed state */
+		.tooltip {
+			position: absolute;
+			left: 4.5rem;
+			background: #1f2937;
+			color: white;
+			padding: 0.5rem 0.75rem;
+			border-radius: 0.375rem;
+			font-size: 0.875rem;
+			white-space: nowrap;
+			opacity: 0;
+			visibility: hidden;
+			transition: all 0.2s ease-in-out;
+			z-index: 1000;
+		}
+		
+		.sidebar-collapsed .menu-item:hover .tooltip {
+			opacity: 1;
+			visibility: visible;
+		}
+		
 		/* Card hover effect */
 		.card-hover {
 			transition: all 0.3s ease;
@@ -58,140 +130,169 @@
 <body class="bg-gray-100">
 	<div class="flex h-screen bg-gray-100">
 		<!-- Sidebar -->
-		<div id="sidebar" class="sidebar-transition bg-gray-900 text-white w-72 min-h-screen p-4 overflow-y-auto">
+		<div id="sidebar" class="sidebar-transition sidebar-expanded bg-gray-900 text-white min-h-screen p-4 overflow-y-auto">
 			<div class="flex items-center justify-between mb-6">
-				<div class="flex items-center">
-					<img src="/assets/svg/logo-dark-bg.svg" alt="Radiology Resident" class="logo-admin">
+				<div class="flex items-center overflow-hidden">
+					<img src="/assets/svg/logo-dark-bg.svg" alt="Radiology Resident" class="logo-admin sidebar-transition">
 				</div>
-				<button id="sidebarToggle" class="lg:hidden text-gray-400 hover:text-white">
-					<i class="fas fa-times text-xl"></i>
+				<!-- Collapse Toggle Button -->
+				<button id="collapseToggle" class="text-gray-400 hover:text-white focus:outline-none sidebar-transition">
+					<i id="collapseIcon" class="fas fa-chevron-left text-lg"></i>
 				</button>
 			</div>
 			
 			<!-- Navigation Menu -->
 			<nav class="space-y-1">
 				<!-- Dashboard -->
-				<a href="/admin" class="flex items-center px-3 py-2 text-gray-100 bg-blue-600 rounded-md text-sm">
-					<i class="fas fa-tachometer-alt w-4 h-4 mr-2"></i>
-					<span>Dashboard</span>
+				<a href="/admin" class="menu-item flex items-center px-3 py-2 text-gray-100 bg-blue-600 rounded-md text-sm relative">
+					<i class="fas fa-tachometer-alt w-4 h-4 flex-shrink-0"></i>
+					<span class="sidebar-text ml-2">Dashboard</span>
+					<div class="tooltip">Dashboard</div>
 				</a>
 				
 				<!-- Users Management -->
 				<div class="mt-3">
-					<div class="flex items-center px-3 py-2 text-gray-200 text-xs font-semibold uppercase tracking-wider">
-						<i class="fas fa-users w-4 h-4 mr-2"></i>
-						<span>Users Management</span>
-					</div>
-					<div class="ml-4 space-y-1">
-						<a href="/admin/users" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-user-friends w-3 h-3 mr-2"></i>
-							<span>All Users</span>
+					<button class="menu-item submenu-toggle flex items-center w-full px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md text-sm relative" data-target="users-submenu">
+						<i class="fas fa-users w-4 h-4 flex-shrink-0"></i>
+						<span class="sidebar-text ml-2 flex-1 text-left">Users Management</span>
+						<i class="sidebar-text fas fa-chevron-down ml-auto transform transition-transform duration-200"></i>
+						<div class="tooltip">Users Management</div>
+					</button>
+					<div id="users-submenu" class="submenu ml-6 mt-1 space-y-1">
+						<a href="/admin/users" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-user-friends w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">All Users</span>
+							<div class="tooltip">All Users</div>
 						</a>
-						<a href="/admin/contacts" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-address-book w-3 h-3 mr-2"></i>
-							<span>Contact List</span>
+						<a href="/admin/contacts" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-address-book w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Contact List</span>
+							<div class="tooltip">Contact List</div>
 						</a>
 					</div>
 				</div>
 				
 				<!-- Theory Exams -->
 				<div class="mt-3">
-					<div class="flex items-center px-3 py-2 text-gray-200 text-xs font-semibold uppercase tracking-wider">
-						<i class="fas fa-book-open w-4 h-4 mr-2"></i>
-						<span>Theory Exams</span>
-					</div>
-					<div class="ml-4 space-y-1">
-						<a href="/admin/notes-chapters" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-bookmark w-3 h-3 mr-2"></i>
-							<span>Notes Chapters</span>
+					<button class="menu-item submenu-toggle flex items-center w-full px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md text-sm relative" data-target="theory-submenu">
+						<i class="fas fa-book-open w-4 h-4 flex-shrink-0"></i>
+						<span class="sidebar-text ml-2 flex-1 text-left">Theory Exams</span>
+						<i class="sidebar-text fas fa-chevron-down ml-auto transform transition-transform duration-200"></i>
+						<div class="tooltip">Theory Exams</div>
+					</button>
+					<div id="theory-submenu" class="submenu ml-6 mt-1 space-y-1">
+						<a href="/admin/notes-chapters" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-bookmark w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Notes Chapters</span>
+							<div class="tooltip">Notes Chapters</div>
 						</a>
-						<a href="/admin/notes" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-sticky-note w-3 h-3 mr-2"></i>
-							<span>Notes</span>
+						<a href="/admin/notes" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-sticky-note w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Notes</span>
+							<div class="tooltip">Notes</div>
 						</a>
-						<a href="/admin/prev-year-questions" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-question-circle w-3 h-3 mr-2"></i>
-							<span>Prev Year Questions</span>
+						<a href="/admin/prev-year-questions" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-question-circle w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Prev Year Questions</span>
+							<div class="tooltip">Prev Year Questions</div>
 						</a>
 					</div>
 				</div>
 				
 				<!-- Video Tutorial -->
 				<div class="mt-3">
-					<div class="flex items-center px-3 py-2 text-gray-200 text-xs font-semibold uppercase tracking-wider">
-						<i class="fas fa-video w-4 h-4 mr-2"></i>
-						<span>Video Tutorial</span>
-					</div>
-					<div class="ml-4 space-y-1">
-						<a href="/admin/video-categories" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-folder w-3 h-3 mr-2"></i>
-							<span>Video Category</span>
+					<button class="menu-item submenu-toggle flex items-center w-full px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md text-sm relative" data-target="video-submenu">
+						<i class="fas fa-video w-4 h-4 flex-shrink-0"></i>
+						<span class="sidebar-text ml-2 flex-1 text-left">Video Tutorial</span>
+						<i class="sidebar-text fas fa-chevron-down ml-auto transform transition-transform duration-200"></i>
+						<div class="tooltip">Video Tutorial</div>
+					</button>
+					<div id="video-submenu" class="submenu ml-6 mt-1 space-y-1">
+						<a href="/admin/video-categories" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-folder w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Video Category</span>
+							<div class="tooltip">Video Category</div>
 						</a>
-						<a href="/admin/videos" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-play-circle w-3 h-3 mr-2"></i>
-							<span>Videos</span>
+						<a href="/admin/videos" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-play-circle w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Videos</span>
+							<div class="tooltip">Videos</div>
 						</a>
 					</div>
 				</div>
 				
 				<!-- Spotters -->
 				<div class="mt-3">
-					<div class="flex items-center px-3 py-2 text-gray-200 text-xs font-semibold uppercase tracking-wider">
-						<i class="fas fa-search w-4 h-4 mr-2"></i>
-						<span>Spotters</span>
-					</div>
-					<div class="ml-4 space-y-1">
-						<a href="/admin/spotter-categories" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-tags w-3 h-3 mr-2"></i>
-							<span>Spotter Category</span>
+					<button class="menu-item submenu-toggle flex items-center w-full px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md text-sm relative" data-target="spotters-submenu">
+						<i class="fas fa-search w-4 h-4 flex-shrink-0"></i>
+						<span class="sidebar-text ml-2 flex-1 text-left">Spotters</span>
+						<i class="sidebar-text fas fa-chevron-down ml-auto transform transition-transform duration-200"></i>
+						<div class="tooltip">Spotters</div>
+					</button>
+					<div id="spotters-submenu" class="submenu ml-6 mt-1 space-y-1">
+						<a href="/admin/spotter-categories" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-tags w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Spotter Category</span>
+							<div class="tooltip">Spotter Category</div>
 						</a>
-						<a href="/admin/spotters" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-crosshairs w-3 h-3 mr-2"></i>
-							<span>Spotters</span>
+						<a href="/admin/spotters" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-crosshairs w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Spotters</span>
+							<div class="tooltip">Spotters</div>
 						</a>
-						<a href="/admin/osce-categories" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-layer-group w-3 h-3 mr-2"></i>
-							<span>OSCE Category</span>
+						<a href="/admin/osce-categories" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-layer-group w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">OSCE Category</span>
+							<div class="tooltip">OSCE Category</div>
 						</a>
-						<a href="/admin/osce" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-stethoscope w-3 h-3 mr-2"></i>
-							<span>OSCE</span>
+						<a href="/admin/osce" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-stethoscope w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">OSCE</span>
+							<div class="tooltip">OSCE</div>
 						</a>
 					</div>
 				</div>
 				
 				<!-- Rapid FRS -->
 				<div class="mt-3">
-					<div class="flex items-center px-3 py-2 text-gray-200 text-xs font-semibold uppercase tracking-wider">
-						<i class="fas fa-bolt w-4 h-4 mr-2"></i>
-						<span>Rapid FRS</span>
-					</div>
-					<div class="ml-4 space-y-1">
-						<a href="/admin/rapid-frs-categories" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-list w-3 h-3 mr-2"></i>
-							<span>Rapid FRS Category</span>
+					<button class="menu-item submenu-toggle flex items-center w-full px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md text-sm relative" data-target="rapidfrs-submenu">
+						<i class="fas fa-bolt w-4 h-4 flex-shrink-0"></i>
+						<span class="sidebar-text ml-2 flex-1 text-left">Rapid FRS</span>
+						<i class="sidebar-text fas fa-chevron-down ml-auto transform transition-transform duration-200"></i>
+						<div class="tooltip">Rapid FRS</div>
+					</button>
+					<div id="rapidfrs-submenu" class="submenu ml-6 mt-1 space-y-1">
+						<a href="/admin/rapid-frs-categories" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-list w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Rapid FRS Category</span>
+							<div class="tooltip">Rapid FRS Category</div>
 						</a>
-						<a href="/admin/rapid-frs" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-fast-forward w-3 h-3 mr-2"></i>
-							<span>Rapid FRS</span>
+						<a href="/admin/rapid-frs" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-fast-forward w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Rapid FRS</span>
+							<div class="tooltip">Rapid FRS</div>
 						</a>
 					</div>
 				</div>
 				
 				<!-- Table Viva -->
 				<div class="mt-3">
-					<div class="flex items-center px-3 py-2 text-gray-200 text-xs font-semibold uppercase tracking-wider">
-						<i class="fas fa-table w-4 h-4 mr-2"></i>
-						<span>Table Viva</span>
-					</div>
-					<div class="ml-4 space-y-1">
-						<a href="/admin/table-viva-categories" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-th-list w-3 h-3 mr-2"></i>
-							<span>Table Viva Category</span>
+					<button class="menu-item submenu-toggle flex items-center w-full px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md text-sm relative" data-target="tableviva-submenu">
+						<i class="fas fa-table w-4 h-4 flex-shrink-0"></i>
+						<span class="sidebar-text ml-2 flex-1 text-left">Table Viva</span>
+						<i class="sidebar-text fas fa-chevron-down ml-auto transform transition-transform duration-200"></i>
+						<div class="tooltip">Table Viva</div>
+					</button>
+					<div id="tableviva-submenu" class="submenu ml-6 mt-1 space-y-1">
+						<a href="/admin/table-viva-categories" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-th-list w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Table Viva Category</span>
+							<div class="tooltip">Table Viva Category</div>
 						</a>
-						<a href="/admin/table-viva" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-comments w-3 h-3 mr-2"></i>
-							<span>Table Viva</span>
+						<a href="/admin/table-viva" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-comments w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Table Viva</span>
+							<div class="tooltip">Table Viva</div>
 						</a>
 					</div>
 				</div>
@@ -261,72 +362,85 @@
 				<!-- Content Management -->
 				<div class="mt-4 border-t border-gray-700 pt-3">
 					<!-- Pages -->
-					<a href="/admin/pages" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1">
-						<i class="fas fa-file-alt w-4 h-4 mr-2"></i>
-						<span>Pages</span>
+					<a href="/admin/pages" class="menu-item flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1 relative">
+						<i class="fas fa-file-alt w-4 h-4 flex-shrink-0"></i>
+						<span class="sidebar-text ml-2">Pages</span>
+						<div class="tooltip">Pages</div>
 					</a>
 					
 					<!-- Banner -->
-					<a href="/admin/banners" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1">
-						<i class="fas fa-image w-4 h-4 mr-2"></i>
-						<span>Banner</span>
+					<a href="/admin/banners" class="menu-item flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1 relative">
+						<i class="fas fa-image w-4 h-4 flex-shrink-0"></i>
+						<span class="sidebar-text ml-2">Banner</span>
+						<div class="tooltip">Banner</div>
 					</a>
 					
 					<!-- Blogs -->
-					<a href="/admin/blogs" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1">
-						<i class="fas fa-blog w-4 h-4 mr-2"></i>
-						<span>All Blogs</span>
+					<a href="/admin/blogs" class="menu-item flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1 relative">
+						<i class="fas fa-blog w-4 h-4 flex-shrink-0"></i>
+						<span class="sidebar-text ml-2">All Blogs</span>
+						<div class="tooltip">All Blogs</div>
 					</a>
 					
 					<!-- Testimonials -->
-					<a href="/admin/testimonials" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1">
-						<i class="fas fa-quote-left w-4 h-4 mr-2"></i>
-						<span>All Testimonial</span>
+					<a href="/admin/testimonials" class="menu-item flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1 relative">
+						<i class="fas fa-quote-left w-4 h-4 flex-shrink-0"></i>
+						<span class="sidebar-text ml-2">All Testimonial</span>
+						<div class="tooltip">All Testimonial</div>
 					</a>
 					
 					<!-- Plan -->
-					<a href="/admin/plans" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1">
-						<i class="fas fa-credit-card w-4 h-4 mr-2"></i>
-						<span>Plan</span>
+					<a href="/admin/plans" class="menu-item flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1 relative">
+						<i class="fas fa-credit-card w-4 h-4 flex-shrink-0"></i>
+						<span class="sidebar-text ml-2">Plan</span>
+						<div class="tooltip">Plan</div>
 					</a>
 					
 					<!-- Subscription -->
-					<a href="/admin/subscriptions" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1">
-						<i class="fas fa-user-check w-4 h-4 mr-2"></i>
-						<span>Subscription</span>
+					<a href="/admin/subscriptions" class="menu-item flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1 relative">
+						<i class="fas fa-user-check w-4 h-4 flex-shrink-0"></i>
+						<span class="sidebar-text ml-2">Subscription</span>
+						<div class="tooltip">Subscription</div>
 					</a>
 					
 					<!-- FAQ -->
-					<a href="/admin/faq" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1">
-						<i class="fas fa-question-circle w-4 h-4 mr-2"></i>
-						<span>FAQ</span>
+					<a href="/admin/faq" class="menu-item flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1 relative">
+						<i class="fas fa-question-circle w-4 h-4 flex-shrink-0"></i>
+						<span class="sidebar-text ml-2">FAQ</span>
+						<div class="tooltip">FAQ</div>
 					</a>
 					
 					<!-- Report -->
-					<a href="/admin/reports" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1">
-						<i class="fas fa-chart-line w-4 h-4 mr-2"></i>
-						<span>Notifications</span>
+					<a href="/admin/reports" class="menu-item flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1 relative">
+						<i class="fas fa-chart-line w-4 h-4 flex-shrink-0"></i>
+						<span class="sidebar-text ml-2">Notifications</span>
+						<div class="tooltip">Notifications</div>
 					</a>
 				</div>
 				
 				<!-- General Settings -->
 				<div class="mt-3 border-t border-gray-700 pt-3">
-					<div class="flex items-center px-3 py-2 text-gray-200 text-xs font-semibold uppercase tracking-wider">
-						<i class="fas fa-cogs w-4 h-4 mr-2"></i>
-						<span>General Settings</span>
-					</div>
-					<div class="ml-4 space-y-1">
-						<a href="/admin/global-settings" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-globe w-3 h-3 mr-2"></i>
-							<span>Global Settings</span>
+					<button class="menu-item submenu-toggle flex items-center w-full px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md text-sm relative" data-target="settings-submenu">
+						<i class="fas fa-cogs w-4 h-4 flex-shrink-0"></i>
+						<span class="sidebar-text ml-2 flex-1 text-left">General Settings</span>
+						<i class="sidebar-text fas fa-chevron-down ml-auto transform transition-transform duration-200"></i>
+						<div class="tooltip">General Settings</div>
+					</button>
+					<div id="settings-submenu" class="submenu ml-6 mt-1 space-y-1">
+						<a href="/admin/global-settings" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-globe w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Global Settings</span>
+							<div class="tooltip">Global Settings</div>
 						</a>
-						<a href="/admin/logo-favicon" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-icons w-3 h-3 mr-2"></i>
-							<span>Logo & Favicon</span>
+						<a href="/admin/logo-favicon" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-icons w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Logo & Favicon</span>
+							<div class="tooltip">Logo & Favicon</div>
 						</a>
-						<a href="/admin/settings" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-cog w-3 h-3 mr-2"></i>
-							<span>Settings</span>
+						<a href="/admin/settings" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-cog w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Settings</span>
+							<div class="tooltip">Settings</div>
 						</a>
 					</div>
 				</div>
@@ -334,15 +448,17 @@
 				<div class="border-t border-gray-700 my-4"></div>
 				
 				<!-- Back to Site -->
-				<a href="/" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors">
-					<i class="fas fa-external-link-alt w-5 h-5 mr-3"></i>
-					<span>Back to Site</span>
+				<a href="/" class="menu-item flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors relative">
+					<i class="fas fa-external-link-alt w-5 h-5 flex-shrink-0"></i>
+					<span class="sidebar-text ml-3">Back to Site</span>
+					<div class="tooltip">Back to Site</div>
 				</a>
 				
 				<!-- Logout -->
-				<a href="/auth/logout" class="flex items-center px-4 py-3 text-gray-300 hover:bg-red-600 hover:text-white rounded-lg transition-colors">
-					<i class="fas fa-sign-out-alt w-5 h-5 mr-3"></i>
-					<span>Logout</span>
+				<a href="/auth/logout" class="menu-item flex items-center px-4 py-3 text-gray-300 hover:bg-red-600 hover:text-white rounded-lg transition-colors relative">
+					<i class="fas fa-sign-out-alt w-5 h-5 flex-shrink-0"></i>
+					<span class="sidebar-text ml-3">Logout</span>
+					<div class="tooltip">Logout</div>
 				</a>
 			</nav>
 		</div>
@@ -565,30 +681,88 @@
 	<div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden hidden"></div>
 
 	<script>
-		// Sidebar toggle functionality
-		const menuToggle = document.getElementById('menuToggle');
-		const sidebarToggle = document.getElementById('sidebarToggle');
+		// Sidebar collapse functionality
+		const collapseToggle = document.getElementById('collapseToggle');
 		const sidebar = document.getElementById('sidebar');
+		const collapseIcon = document.getElementById('collapseIcon');
+		
+		// Initialize sidebar state from localStorage or default to expanded
+		let isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+		
+		function updateSidebarState() {
+			if (isCollapsed) {
+				sidebar.classList.remove('sidebar-expanded');
+				sidebar.classList.add('sidebar-collapsed');
+				collapseIcon.classList.remove('fa-chevron-left');
+				collapseIcon.classList.add('fa-chevron-right');
+			} else {
+				sidebar.classList.remove('sidebar-collapsed');
+				sidebar.classList.add('sidebar-expanded');
+				collapseIcon.classList.remove('fa-chevron-right');
+				collapseIcon.classList.add('fa-chevron-left');
+			}
+			localStorage.setItem('sidebarCollapsed', isCollapsed);
+		}
+		
+		// Toggle sidebar collapse
+		collapseToggle.addEventListener('click', function() {
+			isCollapsed = !isCollapsed;
+			updateSidebarState();
+		});
+		
+		// Initialize sidebar state on page load
+		updateSidebarState();
+		
+		// Submenu toggle functionality
+		const submenuToggles = document.querySelectorAll('.submenu-toggle');
+		submenuToggles.forEach(toggle => {
+			toggle.addEventListener('click', function(e) {
+				e.preventDefault();
+				const targetId = this.getAttribute('data-target');
+				const submenu = document.getElementById(targetId);
+				const chevron = this.querySelector('.fa-chevron-down');
+				
+				if (submenu) {
+					// Toggle submenu visibility
+					if (submenu.style.maxHeight && submenu.style.maxHeight !== '0px') {
+						submenu.style.maxHeight = '0px';
+						chevron.style.transform = 'rotate(0deg)';
+					} else {
+						submenu.style.maxHeight = submenu.scrollHeight + 'px';
+						chevron.style.transform = 'rotate(180deg)';
+					}
+				}
+			});
+		});
+		
+		// Mobile sidebar functionality
+		const menuToggle = document.getElementById('menuToggle');
 		const sidebarOverlay = document.getElementById('sidebarOverlay');
 		
-		function toggleSidebar() {
+		function toggleMobileSidebar() {
 			sidebar.classList.toggle('-translate-x-full');
 			sidebarOverlay.classList.toggle('hidden');
 		}
 		
-		menuToggle.addEventListener('click', toggleSidebar);
-		sidebarToggle.addEventListener('click', toggleSidebar);
-		sidebarOverlay.addEventListener('click', toggleSidebar);
+		if (menuToggle) {
+			menuToggle.addEventListener('click', toggleMobileSidebar);
+		}
 		
-		// Close sidebar on window resize
+		if (sidebarOverlay) {
+			sidebarOverlay.addEventListener('click', toggleMobileSidebar);
+		}
+		
+		// Close mobile sidebar on window resize
 		window.addEventListener('resize', function() {
 			if (window.innerWidth >= 1024) {
 				sidebar.classList.remove('-translate-x-full');
-				sidebarOverlay.classList.add('hidden');
+				if (sidebarOverlay) {
+					sidebarOverlay.classList.add('hidden');
+				}
 			}
 		});
 		
-		// Initialize sidebar position on mobile
+		// Initialize mobile sidebar position
 		if (window.innerWidth < 1024) {
 			sidebar.classList.add('-translate-x-full');
 		}
