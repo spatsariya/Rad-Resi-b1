@@ -165,7 +165,12 @@ class Router {
         $this->get('/admin/plans/get-details', 'PlanController@getPlanDetails', ['auth']);
         $this->post('/admin/plans/update-order', 'PlanController@updateOrder', ['auth']);
         
-        $this->get('/admin/subscriptions', 'AdminController@subscriptions', ['auth']);
+        // Subscriptions Management
+        $this->get('/admin/subscriptions', 'SubscriptionController@index', ['auth']);
+        $this->get('/admin/subscriptions/get-details', 'SubscriptionController@getSubscriptionDetails', ['auth']);
+        $this->post('/admin/subscriptions/update-status', 'SubscriptionController@updateStatus', ['auth']);
+        $this->post('/admin/subscriptions/delete', 'SubscriptionController@delete', ['auth']);
+        $this->get('/admin/subscriptions/generate-invoice', 'SubscriptionController@generateInvoice', ['auth']);
         $this->get('/admin/faq', 'AdminController@faq', ['auth']);
         $this->get('/admin/reports', 'AdminController@reports', ['auth']);
         
