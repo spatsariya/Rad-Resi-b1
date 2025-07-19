@@ -307,4 +307,194 @@ class AdminController extends BaseController
         // This would handle form validation and course updates
         $this->redirect('/admin/courses?success=Course updated successfully');
     }
+    
+    // Users Management Methods
+    public function contacts()
+    {
+        $this->renderAdminPage('Contact List', 'Manage contact messages and inquiries');
+    }
+    
+    // Theory Exams Methods
+    public function notesChapters()
+    {
+        $this->renderAdminPage('Notes Chapters', 'Manage notes chapters for theory exams');
+    }
+    
+    public function notes()
+    {
+        $this->renderAdminPage('Notes', 'Manage theory exam notes');
+    }
+    
+    public function prevYearQuestions()
+    {
+        $this->renderAdminPage('Previous Year Questions', 'Manage previous year exam questions');
+    }
+    
+    // Video Tutorial Methods
+    public function videoCategories()
+    {
+        $this->renderAdminPage('Video Categories', 'Manage video tutorial categories');
+    }
+    
+    public function videos()
+    {
+        $this->renderAdminPage('Videos', 'Manage video tutorials');
+    }
+    
+    // Spotters Methods
+    public function spotterCategories()
+    {
+        $this->renderAdminPage('Spotter Categories', 'Manage spotter categories');
+    }
+    
+    public function spotters()
+    {
+        $this->renderAdminPage('Spotters', 'Manage spotter questions');
+    }
+    
+    public function osceCategories()
+    {
+        $this->renderAdminPage('OSCE Categories', 'Manage OSCE categories');
+    }
+    
+    public function osce()
+    {
+        $this->renderAdminPage('OSCE', 'Manage OSCE questions and cases');
+    }
+    
+    // Rapid FRS Methods
+    public function rapidFrsCategories()
+    {
+        $this->renderAdminPage('Rapid FRS Categories', 'Manage Rapid FRS categories');
+    }
+    
+    public function rapidFrs()
+    {
+        $this->renderAdminPage('Rapid FRS', 'Manage Rapid FRS questions');
+    }
+    
+    // Table Viva Methods
+    public function tableVivaCategories()
+    {
+        $this->renderAdminPage('Table Viva Categories', 'Manage table viva categories');
+    }
+    
+    public function tableViva()
+    {
+        $this->renderAdminPage('Table Viva', 'Manage table viva questions');
+    }
+    
+    // Long Cases Methods
+    public function longcasesCategories()
+    {
+        $this->renderAdminPage('Long Cases Categories', 'Manage long cases categories');
+    }
+    
+    public function longCases()
+    {
+        $this->renderAdminPage('Long Cases', 'Manage long case studies');
+    }
+    
+    // Short Cases Methods
+    public function shortcasesCategories()
+    {
+        $this->renderAdminPage('Short Cases Categories', 'Manage short cases categories');
+    }
+    
+    public function shortCases()
+    {
+        $this->renderAdminPage('Short Cases', 'Manage short case studies');
+    }
+    
+    // FRCR Methods
+    public function frcrCategories()
+    {
+        $this->renderAdminPage('FRCR Categories', 'Manage FRCR exam categories');
+    }
+    
+    public function frcrSubjects()
+    {
+        $this->renderAdminPage('FRCR Subjects', 'Manage FRCR exam subjects');
+    }
+    
+    public function frcrQuiz()
+    {
+        $this->renderAdminPage('FRCR Quiz', 'Manage FRCR quiz questions');
+    }
+    
+    public function frcrQuestions()
+    {
+        $this->renderAdminPage('FRCR Questions', 'Manage FRCR exam questions');
+    }
+    
+    // Content Management Methods
+    public function pages()
+    {
+        $this->renderAdminPage('Pages', 'Manage website pages and content');
+    }
+    
+    public function banners()
+    {
+        $this->renderAdminPage('Banners', 'Manage website banners and promotional content');
+    }
+    
+    public function blogs()
+    {
+        $this->renderAdminPage('All Blogs', 'Manage blog posts and articles');
+    }
+    
+    public function testimonials()
+    {
+        $this->renderAdminPage('All Testimonials', 'Manage user testimonials and reviews');
+    }
+    
+    public function plans()
+    {
+        $this->renderAdminPage('Plans', 'Manage subscription plans and pricing');
+    }
+    
+    public function subscriptions()
+    {
+        $this->renderAdminPage('Subscriptions', 'Manage user subscriptions');
+    }
+    
+    public function faq()
+    {
+        $this->renderAdminPage('FAQ', 'Manage frequently asked questions');
+    }
+    
+    public function reports()
+    {
+        $this->renderAdminPage('Reports & Notifications', 'View reports and manage notifications');
+    }
+    
+    // General Settings Methods
+    public function globalSettings()
+    {
+        $this->renderAdminPage('Global Settings', 'Manage global website settings');
+    }
+    
+    public function logoFavicon()
+    {
+        $this->renderAdminPage('Logo & Favicon', 'Manage website logo and favicon');
+    }
+    
+    public function settings()
+    {
+        $this->renderAdminPage('Settings', 'Manage general admin settings');
+    }
+    
+    // Helper method to render admin pages with consistent structure
+    private function renderAdminPage($title, $description, $additionalData = [])
+    {
+        $data = array_merge([
+            'title' => $title . ' - Admin Dashboard',
+            'description' => $description,
+            'page_title' => $title,
+            'page_description' => $description,
+            'stats' => $this->getDashboardStats()
+        ], $additionalData);
+        
+        $this->view('admin/generic-page', $data);
+    }
 }

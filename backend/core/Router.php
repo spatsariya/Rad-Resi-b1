@@ -77,6 +77,64 @@ class Router {
         
         // Admin Routes (protected)
         $this->get('/admin', 'AdminController@dashboard', ['auth']);
+        
+        // Users Management
+        $this->get('/admin/users', 'AdminController@users', ['auth']);
+        $this->get('/admin/contacts', 'AdminController@contacts', ['auth']);
+        
+        // Theory Exams
+        $this->get('/admin/notes-chapters', 'AdminController@notesChapters', ['auth']);
+        $this->get('/admin/notes', 'AdminController@notes', ['auth']);
+        $this->get('/admin/prev-year-questions', 'AdminController@prevYearQuestions', ['auth']);
+        
+        // Video Tutorial
+        $this->get('/admin/video-categories', 'AdminController@videoCategories', ['auth']);
+        $this->get('/admin/videos', 'AdminController@videos', ['auth']);
+        
+        // Spotters
+        $this->get('/admin/spotter-categories', 'AdminController@spotterCategories', ['auth']);
+        $this->get('/admin/spotters', 'AdminController@spotters', ['auth']);
+        $this->get('/admin/osce-categories', 'AdminController@osceCategories', ['auth']);
+        $this->get('/admin/osce', 'AdminController@osce', ['auth']);
+        
+        // Rapid FRS
+        $this->get('/admin/rapid-frs-categories', 'AdminController@rapidFrsCategories', ['auth']);
+        $this->get('/admin/rapid-frs', 'AdminController@rapidFrs', ['auth']);
+        
+        // Table Viva
+        $this->get('/admin/table-viva-categories', 'AdminController@tableVivaCategories', ['auth']);
+        $this->get('/admin/table-viva', 'AdminController@tableViva', ['auth']);
+        
+        // Long Cases
+        $this->get('/admin/longcases-categories', 'AdminController@longcasesCategories', ['auth']);
+        $this->get('/admin/long-cases', 'AdminController@longCases', ['auth']);
+        
+        // Short Cases
+        $this->get('/admin/shortcases-categories', 'AdminController@shortcasesCategories', ['auth']);
+        $this->get('/admin/short-cases', 'AdminController@shortCases', ['auth']);
+        
+        // FRCR
+        $this->get('/admin/frcr-categories', 'AdminController@frcrCategories', ['auth']);
+        $this->get('/admin/frcr-subjects', 'AdminController@frcrSubjects', ['auth']);
+        $this->get('/admin/frcr-quiz', 'AdminController@frcrQuiz', ['auth']);
+        $this->get('/admin/frcr-questions', 'AdminController@frcrQuestions', ['auth']);
+        
+        // Content Management
+        $this->get('/admin/pages', 'AdminController@pages', ['auth']);
+        $this->get('/admin/banners', 'AdminController@banners', ['auth']);
+        $this->get('/admin/blogs', 'AdminController@blogs', ['auth']);
+        $this->get('/admin/testimonials', 'AdminController@testimonials', ['auth']);
+        $this->get('/admin/plans', 'AdminController@plans', ['auth']);
+        $this->get('/admin/subscriptions', 'AdminController@subscriptions', ['auth']);
+        $this->get('/admin/faq', 'AdminController@faq', ['auth']);
+        $this->get('/admin/reports', 'AdminController@reports', ['auth']);
+        
+        // General Settings
+        $this->get('/admin/global-settings', 'AdminController@globalSettings', ['auth']);
+        $this->get('/admin/logo-favicon', 'AdminController@logoFavicon', ['auth']);
+        $this->get('/admin/settings', 'AdminController@settings', ['auth']);
+        
+        // Legacy routes
         $this->get('/admin/courses', 'AdminController@courses', ['auth']);
         $this->get('/admin/users', 'AdminController@users', ['auth']);
         $this->post('/admin/course/create', 'AdminController@createCourse', ['auth']);

@@ -52,8 +52,8 @@
 <body class="bg-gray-100">
 	<div class="flex h-screen bg-gray-100">
 		<!-- Sidebar -->
-		<div id="sidebar" class="sidebar-transition bg-gray-900 text-white w-64 min-h-screen p-4">
-			<div class="flex items-center justify-between mb-8">
+		<div id="sidebar" class="sidebar-transition bg-gray-900 text-white w-72 min-h-screen p-4 overflow-y-auto">
+			<div class="flex items-center justify-between mb-6">
 				<div class="flex items-center">
 					<i class="fas fa-stethoscope text-blue-400 text-xl mr-2"></i>
 					<h1 class="text-lg font-semibold">Radiology Resident</h1>
@@ -64,36 +64,267 @@
 			</div>
 			
 			<!-- Navigation Menu -->
-			<nav class="space-y-2">
+			<nav class="space-y-1">
 				<!-- Dashboard -->
-				<a href="/admin" class="flex items-center px-4 py-3 text-gray-100 bg-blue-600 rounded-lg">
-					<i class="fas fa-tachometer-alt w-5 h-5 mr-3"></i>
+				<a href="/admin" class="flex items-center px-3 py-2 text-gray-100 bg-blue-600 rounded-md text-sm">
+					<i class="fas fa-tachometer-alt w-4 h-4 mr-2"></i>
 					<span>Dashboard</span>
 				</a>
 				
-				<!-- Courses -->
-				<a href="/admin/courses" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors">
-					<i class="fas fa-graduation-cap w-5 h-5 mr-3"></i>
-					<span>Courses</span>
-				</a>
+				<!-- Users Management -->
+				<div class="mt-3">
+					<div class="flex items-center px-3 py-2 text-gray-200 text-xs font-semibold uppercase tracking-wider">
+						<i class="fas fa-users w-4 h-4 mr-2"></i>
+						<span>Users Management</span>
+					</div>
+					<div class="ml-4 space-y-1">
+						<a href="/admin/users" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-user-friends w-3 h-3 mr-2"></i>
+							<span>All Users</span>
+						</a>
+						<a href="/admin/contacts" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-address-book w-3 h-3 mr-2"></i>
+							<span>Contact List</span>
+						</a>
+					</div>
+				</div>
 				
-				<!-- Users -->
-				<a href="/admin/users" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors">
-					<i class="fas fa-users w-5 h-5 mr-3"></i>
-					<span>Users</span>
-				</a>
+				<!-- Theory Exams -->
+				<div class="mt-3">
+					<div class="flex items-center px-3 py-2 text-gray-200 text-xs font-semibold uppercase tracking-wider">
+						<i class="fas fa-book-open w-4 h-4 mr-2"></i>
+						<span>Theory Exams</span>
+					</div>
+					<div class="ml-4 space-y-1">
+						<a href="/admin/notes-chapters" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-bookmark w-3 h-3 mr-2"></i>
+							<span>Notes Chapters</span>
+						</a>
+						<a href="/admin/notes" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-sticky-note w-3 h-3 mr-2"></i>
+							<span>Notes</span>
+						</a>
+						<a href="/admin/prev-year-questions" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-question-circle w-3 h-3 mr-2"></i>
+							<span>Prev Year Questions</span>
+						</a>
+					</div>
+				</div>
 				
-				<!-- Analytics -->
-				<a href="/admin/analytics" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors">
-					<i class="fas fa-chart-bar w-5 h-5 mr-3"></i>
-					<span>Analytics</span>
-				</a>
+				<!-- Video Tutorial -->
+				<div class="mt-3">
+					<div class="flex items-center px-3 py-2 text-gray-200 text-xs font-semibold uppercase tracking-wider">
+						<i class="fas fa-video w-4 h-4 mr-2"></i>
+						<span>Video Tutorial</span>
+					</div>
+					<div class="ml-4 space-y-1">
+						<a href="/admin/video-categories" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-folder w-3 h-3 mr-2"></i>
+							<span>Video Category</span>
+						</a>
+						<a href="/admin/videos" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-play-circle w-3 h-3 mr-2"></i>
+							<span>Videos</span>
+						</a>
+					</div>
+				</div>
 				
-				<!-- Settings -->
-				<a href="/admin/settings" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors">
-					<i class="fas fa-cog w-5 h-5 mr-3"></i>
-					<span>Settings</span>
-				</a>
+				<!-- Spotters -->
+				<div class="mt-3">
+					<div class="flex items-center px-3 py-2 text-gray-200 text-xs font-semibold uppercase tracking-wider">
+						<i class="fas fa-search w-4 h-4 mr-2"></i>
+						<span>Spotters</span>
+					</div>
+					<div class="ml-4 space-y-1">
+						<a href="/admin/spotter-categories" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-tags w-3 h-3 mr-2"></i>
+							<span>Spotter Category</span>
+						</a>
+						<a href="/admin/spotters" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-crosshairs w-3 h-3 mr-2"></i>
+							<span>Spotters</span>
+						</a>
+						<a href="/admin/osce-categories" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-layer-group w-3 h-3 mr-2"></i>
+							<span>OSCE Category</span>
+						</a>
+						<a href="/admin/osce" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-stethoscope w-3 h-3 mr-2"></i>
+							<span>OSCE</span>
+						</a>
+					</div>
+				</div>
+				
+				<!-- Rapid FRS -->
+				<div class="mt-3">
+					<div class="flex items-center px-3 py-2 text-gray-200 text-xs font-semibold uppercase tracking-wider">
+						<i class="fas fa-bolt w-4 h-4 mr-2"></i>
+						<span>Rapid FRS</span>
+					</div>
+					<div class="ml-4 space-y-1">
+						<a href="/admin/rapid-frs-categories" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-list w-3 h-3 mr-2"></i>
+							<span>Rapid FRS Category</span>
+						</a>
+						<a href="/admin/rapid-frs" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-fast-forward w-3 h-3 mr-2"></i>
+							<span>Rapid FRS</span>
+						</a>
+					</div>
+				</div>
+				
+				<!-- Table Viva -->
+				<div class="mt-3">
+					<div class="flex items-center px-3 py-2 text-gray-200 text-xs font-semibold uppercase tracking-wider">
+						<i class="fas fa-table w-4 h-4 mr-2"></i>
+						<span>Table Viva</span>
+					</div>
+					<div class="ml-4 space-y-1">
+						<a href="/admin/table-viva-categories" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-th-list w-3 h-3 mr-2"></i>
+							<span>Table Viva Category</span>
+						</a>
+						<a href="/admin/table-viva" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-comments w-3 h-3 mr-2"></i>
+							<span>Table Viva</span>
+						</a>
+					</div>
+				</div>
+				
+				<!-- Long Cases -->
+				<div class="mt-3">
+					<div class="flex items-center px-3 py-2 text-gray-200 text-xs font-semibold uppercase tracking-wider">
+						<i class="fas fa-file-medical w-4 h-4 mr-2"></i>
+						<span>Long Cases</span>
+					</div>
+					<div class="ml-4 space-y-1">
+						<a href="/admin/longcases-categories" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-folder-open w-3 h-3 mr-2"></i>
+							<span>Longcases Category</span>
+						</a>
+						<a href="/admin/long-cases" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-file-alt w-3 h-3 mr-2"></i>
+							<span>Long Cases</span>
+						</a>
+					</div>
+				</div>
+				
+				<!-- Short Cases -->
+				<div class="mt-3">
+					<div class="flex items-center px-3 py-2 text-gray-200 text-xs font-semibold uppercase tracking-wider">
+						<i class="fas fa-file-medical-alt w-4 h-4 mr-2"></i>
+						<span>Short Cases</span>
+					</div>
+					<div class="ml-4 space-y-1">
+						<a href="/admin/shortcases-categories" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-folder w-3 h-3 mr-2"></i>
+							<span>Shortcases Category</span>
+						</a>
+						<a href="/admin/short-cases" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-file w-3 h-3 mr-2"></i>
+							<span>Short Cases</span>
+						</a>
+					</div>
+				</div>
+				
+				<!-- FRCR -->
+				<div class="mt-3">
+					<div class="flex items-center px-3 py-2 text-gray-200 text-xs font-semibold uppercase tracking-wider">
+						<i class="fas fa-award w-4 h-4 mr-2"></i>
+						<span>FRCR</span>
+					</div>
+					<div class="ml-4 space-y-1">
+						<a href="/admin/frcr-categories" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-category w-3 h-3 mr-2"></i>
+							<span>Category</span>
+						</a>
+						<a href="/admin/frcr-subjects" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-book w-3 h-3 mr-2"></i>
+							<span>Subject</span>
+						</a>
+						<a href="/admin/frcr-quiz" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-quiz w-3 h-3 mr-2"></i>
+							<span>Quiz</span>
+						</a>
+						<a href="/admin/frcr-questions" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-question w-3 h-3 mr-2"></i>
+							<span>Question</span>
+						</a>
+					</div>
+				</div>
+				
+				<!-- Content Management -->
+				<div class="mt-4 border-t border-gray-700 pt-3">
+					<!-- Pages -->
+					<a href="/admin/pages" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1">
+						<i class="fas fa-file-alt w-4 h-4 mr-2"></i>
+						<span>Pages</span>
+					</a>
+					
+					<!-- Banner -->
+					<a href="/admin/banners" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1">
+						<i class="fas fa-image w-4 h-4 mr-2"></i>
+						<span>Banner</span>
+					</a>
+					
+					<!-- Blogs -->
+					<a href="/admin/blogs" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1">
+						<i class="fas fa-blog w-4 h-4 mr-2"></i>
+						<span>All Blogs</span>
+					</a>
+					
+					<!-- Testimonials -->
+					<a href="/admin/testimonials" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1">
+						<i class="fas fa-quote-left w-4 h-4 mr-2"></i>
+						<span>All Testimonial</span>
+					</a>
+					
+					<!-- Plan -->
+					<a href="/admin/plans" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1">
+						<i class="fas fa-credit-card w-4 h-4 mr-2"></i>
+						<span>Plan</span>
+					</a>
+					
+					<!-- Subscription -->
+					<a href="/admin/subscriptions" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1">
+						<i class="fas fa-user-check w-4 h-4 mr-2"></i>
+						<span>Subscription</span>
+					</a>
+					
+					<!-- FAQ -->
+					<a href="/admin/faq" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1">
+						<i class="fas fa-question-circle w-4 h-4 mr-2"></i>
+						<span>FAQ</span>
+					</a>
+					
+					<!-- Report -->
+					<a href="/admin/reports" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm mb-1">
+						<i class="fas fa-chart-line w-4 h-4 mr-2"></i>
+						<span>Notifications</span>
+					</a>
+				</div>
+				
+				<!-- General Settings -->
+				<div class="mt-3 border-t border-gray-700 pt-3">
+					<div class="flex items-center px-3 py-2 text-gray-200 text-xs font-semibold uppercase tracking-wider">
+						<i class="fas fa-cogs w-4 h-4 mr-2"></i>
+						<span>General Settings</span>
+					</div>
+					<div class="ml-4 space-y-1">
+						<a href="/admin/global-settings" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-globe w-3 h-3 mr-2"></i>
+							<span>Global Settings</span>
+						</a>
+						<a href="/admin/logo-favicon" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-icons w-3 h-3 mr-2"></i>
+							<span>Logo & Favicon</span>
+						</a>
+						<a href="/admin/settings" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
+							<i class="fas fa-cog w-3 h-3 mr-2"></i>
+							<span>Settings</span>
+						</a>
+					</div>
+				</div>
 				
 				<div class="border-t border-gray-700 my-4"></div>
 				
@@ -356,6 +587,27 @@
 		if (window.innerWidth < 1024) {
 			sidebar.classList.add('-translate-x-full');
 		}
+		
+		// Add smooth scrolling to navigation
+		const navLinks = document.querySelectorAll('nav a');
+		navLinks.forEach(link => {
+			link.addEventListener('click', function(e) {
+				// Add a small loading state
+				this.style.opacity = '0.7';
+				setTimeout(() => {
+					this.style.opacity = '1';
+				}, 200);
+			});
+		});
+		
+		// Highlight current page in navigation
+		const currentPath = window.location.pathname;
+		navLinks.forEach(link => {
+			if (link.getAttribute('href') === currentPath) {
+				link.classList.remove('text-gray-300', 'hover:bg-gray-800');
+				link.classList.add('bg-blue-600', 'text-white');
+			}
+		});
 	</script>
 </body>
 </html>
