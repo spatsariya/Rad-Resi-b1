@@ -7,13 +7,13 @@
 	<meta name="description" content="<?php echo $description ?? 'Admin dashboard for managing courses, users, and content'; ?>">
 	
 	<!-- Favicon -->
-	<link rel="icon" type="image/svg+xml" href="/backend/assets/svg/dark-icon.svg">
-	<link rel="alternate icon" href="/backend/assets/svg/dark-icon.svg">
+	<link rel="icon" type="image/svg+xml" href="/assets/svg/dark-icon.svg">
+	<link rel="alternate icon" href="/assets/svg/dark-icon.svg">
 	
 	<!-- Tailwind CSS -->
 	<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
 	<!-- Custom Logo Styles -->
-	<link rel="stylesheet" href="/backend/assets/css/logo-styles.css">
+	<link rel="stylesheet" href="/assets/css/logo-styles.css">
 	<!-- Font Awesome -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 	<!-- Inter font (TailAdmin style) -->
@@ -61,7 +61,7 @@
 		<div id="sidebar" class="sidebar-transition bg-gray-900 text-white w-72 min-h-screen p-4 overflow-y-auto">
 			<div class="flex items-center justify-between mb-6">
 				<div class="flex items-center">
-					<img src="/backend/assets/svg/logo-dark-bg.svg" alt="Radiology Resident" class="logo-admin">
+					<img src="/assets/svg/logo-dark-bg.svg" alt="Radiology Resident" class="logo-admin">
 				</div>
 				<button id="sidebarToggle" class="lg:hidden text-gray-400 hover:text-white">
 					<i class="fas fa-times text-xl"></i>

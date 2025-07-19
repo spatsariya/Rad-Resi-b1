@@ -7,13 +7,13 @@
 	<meta name="description" content="<?php echo $description ?? 'Login to your Radiology Resident account'; ?>">
 	
 	<!-- Favicon -->
-	<link rel="icon" type="image/svg+xml" href="/backend/assets/svg/light-icon.svg">
-	<link rel="alternate icon" href="/backend/assets/svg/light-icon.svg">
+	<link rel="icon" type="image/svg+xml" href="/assets/svg/light-icon.svg">
+	<link rel="alternate icon" href="/assets/svg/light-icon.svg">
 	
 	<!-- Tailwind CSS -->
 	<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
 	<!-- Custom Logo Styles -->
-	<link rel="stylesheet" href="/backend/assets/css/logo-styles.css">
+	<link rel="stylesheet" href="/assets/css/logo-styles.css">
 	<!-- Font Awesome -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 	<!-- Poppins font -->
@@ -58,7 +58,7 @@
 		<div class="text-center">
 			<div class="relative inline-block mb-6">
 				<a href="/" class="inline-block">
-					<img src="/backend/assets/svg/logo.svg" alt="Radiology Resident" class="logo-login">
+					<img src="/assets/svg/logo.svg" alt="Radiology Resident" class="logo-login">
 				</a>
 			</div>
 			<h2 class="text-3xl font-bold text-darken mb-2">Welcome Back</h2>

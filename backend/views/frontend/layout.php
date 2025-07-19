@@ -11,13 +11,13 @@ $currentPath = $_SERVER['REQUEST_URI'];
 	<meta name="description" content="<?php echo $description ?? 'Advanced radiology education platform'; ?>">
 	
 	<!-- Favicon -->
-	<link rel="icon" type="image/svg+xml" href="/backend/assets/svg/light-icon.svg">
-	<link rel="alternate icon" href="/backend/assets/svg/light-icon.svg">
+	<link rel="icon" type="image/svg+xml" href="/assets/svg/light-icon.svg">
+	<link rel="alternate icon" href="/assets/svg/light-icon.svg">
 	
 	<!-- Tailwind CSS -->
 	<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
 	<!-- Custom Logo Styles -->
-	<link rel="stylesheet" href="/backend/assets/css/logo-styles.css">
+	<link rel="stylesheet" href="/assets/css/logo-styles.css">
 	<!-- Alpine JS -->
 	<script type="module" src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"></script>
 	<script nomodule src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine-ie11.min.js" defer></script>
@@ -77,7 +77,7 @@ $currentPath = $_SERVER['REQUEST_URI'];
             <div class="flex flex-row items-center justify-between py-6">
                 <div class="relative md:mt-8">
                     <a href="/" class="relative z-50 rounded-lg focus:outline-none focus:shadow-outline">
-						<img src="/backend/assets/svg/logo.svg" alt="Radiology Resident" class="logo-main">
+						<img src="/assets/svg/logo.svg" alt="Radiology Resident" class="logo-main">
 					</a>
                 </div>
                 <button class="rounded-lg md:hidden focus:outline-none focus:shadow-outline" @click="open = !open">
@@ -206,7 +206,7 @@ $currentPath = $_SERVER['REQUEST_URI'];
 			<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
 				<div class="col-span-1 md:col-span-2">
 					<div class="flex items-center mb-4">
-						<img src="/backend/assets/svg/logo-dark-bg.svg" alt="Radiology Resident" class="logo-footer">
+						<img src="/assets/svg/logo-dark-bg.svg" alt="Radiology Resident" class="logo-footer">
 					</div>
 					<p class="text-gray-400 max-w-md">
 						Advanced radiology education platform designed for medical students and residents.

@@ -95,7 +95,7 @@
             <div class="flex flex-row items-center justify-between py-6">
                 <div class="relative md:mt-8">
                     <a href="/" class="relative z-50 rounded-lg focus:outline-none focus:shadow-outline">
-						<img src="/backend/assets/svg/logo.svg" alt="Radiology Resident" class="logo-main">
+						<img src="/assets/svg/logo.svg" alt="Radiology Resident" class="logo-main">
 					</a>
                 </div>
                 <button class="rounded-lg md:hidden focus:outline-none focus:shadow-outline" @click="open = !open">
@@ -185,7 +185,7 @@
 			<div class="w-full lg:w-6/12 lg:-mt-10 relative" id="hero-image">
 				<!-- Banner Image -->
 				<div data-aos="fade-up" data-aos-once="true" class="w-10/12 mx-auto 2xl:-mb-20 relative">
-					<img src="/backend/assets/svg/Banner.svg" alt="Radiology Education Banner" class="w-full h-auto">
+					<img src="/assets/svg/Banner.svg" alt="Radiology Education Banner" class="w-full h-auto">
 				</div>
 				<!-- floating elements -->
 				<div data-aos="fade-up" data-aos-delay="300" data-aos-once="true" class="absolute top-20 -left-6 sm:top-32 sm:left-10 md:top-40 md:left-16 lg:-left-0 lg:top-52 floating-4">
@@ -452,7 +452,7 @@
 		<div class="max-w-lg mx-auto">
 			<div class="flex py-12 justify-center text-white items-center px-20 sm:px-36">
 				<div class="relative">
-					<img src="/backend/assets/svg/logo-dark-bg.svg" alt="Radiology Resident" class="logo-footer">
+					<img src="/assets/svg/logo-dark-bg.svg" alt="Radiology Resident" class="logo-footer">
 				</div>
 				<span class="border-l border-gray-500 text-sm pl-5 py-2 font-semibold">Medical Education Platform</span>
 			</div>
