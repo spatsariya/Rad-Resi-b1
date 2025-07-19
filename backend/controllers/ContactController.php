@@ -62,7 +62,7 @@ class ContactController extends BaseController {
             'contact_groups' => $contact_groups
         ];
         
-        $this->render('admin/contacts', $data);
+        $this->view('admin/contacts', $data);
     }
     
     public function getUserInfo() {
