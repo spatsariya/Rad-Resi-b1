@@ -299,62 +299,76 @@
 				
 				<!-- Long Cases -->
 				<div class="mt-3">
-					<div class="flex items-center px-3 py-2 text-gray-200 text-xs font-semibold uppercase tracking-wider">
-						<i class="fas fa-file-medical w-4 h-4 mr-2"></i>
-						<span>Long Cases</span>
-					</div>
-					<div class="ml-4 space-y-1">
-						<a href="/admin/longcases-categories" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-folder-open w-3 h-3 mr-2"></i>
-							<span>Longcases Category</span>
+					<button class="menu-item submenu-toggle flex items-center w-full px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md text-sm relative" data-target="longcases-submenu">
+						<i class="fas fa-file-medical w-4 h-4 flex-shrink-0"></i>
+						<span class="sidebar-text ml-2 flex-1 text-left">Long Cases</span>
+						<i class="sidebar-text fas fa-chevron-down ml-auto transform transition-transform duration-200"></i>
+						<div class="tooltip">Long Cases</div>
+					</button>
+					<div id="longcases-submenu" class="submenu ml-6 mt-1 space-y-1">
+						<a href="/admin/longcases-categories" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-folder-open w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Longcases Category</span>
+							<div class="tooltip">Longcases Category</div>
 						</a>
-						<a href="/admin/long-cases" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-file-alt w-3 h-3 mr-2"></i>
-							<span>Long Cases</span>
+						<a href="/admin/long-cases" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-file-alt w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Long Cases</span>
+							<div class="tooltip">Long Cases</div>
 						</a>
 					</div>
 				</div>
 				
 				<!-- Short Cases -->
 				<div class="mt-3">
-					<div class="flex items-center px-3 py-2 text-gray-200 text-xs font-semibold uppercase tracking-wider">
-						<i class="fas fa-file-medical-alt w-4 h-4 mr-2"></i>
-						<span>Short Cases</span>
-					</div>
-					<div class="ml-4 space-y-1">
-						<a href="/admin/shortcases-categories" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-folder w-3 h-3 mr-2"></i>
-							<span>Shortcases Category</span>
+					<button class="menu-item submenu-toggle flex items-center w-full px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md text-sm relative" data-target="shortcases-submenu">
+						<i class="fas fa-file-medical-alt w-4 h-4 flex-shrink-0"></i>
+						<span class="sidebar-text ml-2 flex-1 text-left">Short Cases</span>
+						<i class="sidebar-text fas fa-chevron-down ml-auto transform transition-transform duration-200"></i>
+						<div class="tooltip">Short Cases</div>
+					</button>
+					<div id="shortcases-submenu" class="submenu ml-6 mt-1 space-y-1">
+						<a href="/admin/shortcases-categories" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-folder w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Shortcases Category</span>
+							<div class="tooltip">Shortcases Category</div>
 						</a>
-						<a href="/admin/short-cases" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-file w-3 h-3 mr-2"></i>
-							<span>Short Cases</span>
+						<a href="/admin/short-cases" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-file w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Short Cases</span>
+							<div class="tooltip">Short Cases</div>
 						</a>
 					</div>
 				</div>
 				
 				<!-- FRCR -->
 				<div class="mt-3">
-					<div class="flex items-center px-3 py-2 text-gray-200 text-xs font-semibold uppercase tracking-wider">
-						<i class="fas fa-award w-4 h-4 mr-2"></i>
-						<span>FRCR</span>
-					</div>
-					<div class="ml-4 space-y-1">
-						<a href="/admin/frcr-categories" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-category w-3 h-3 mr-2"></i>
-							<span>Category</span>
+					<button class="menu-item submenu-toggle flex items-center w-full px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md text-sm relative" data-target="frcr-submenu">
+						<i class="fas fa-award w-4 h-4 flex-shrink-0"></i>
+						<span class="sidebar-text ml-2 flex-1 text-left">FRCR</span>
+						<i class="sidebar-text fas fa-chevron-down ml-auto transform transition-transform duration-200"></i>
+						<div class="tooltip">FRCR</div>
+					</button>
+					<div id="frcr-submenu" class="submenu ml-6 mt-1 space-y-1">
+						<a href="/admin/frcr-categories" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-tags w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Category</span>
+							<div class="tooltip">Category</div>
 						</a>
-						<a href="/admin/frcr-subjects" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-book w-3 h-3 mr-2"></i>
-							<span>Subject</span>
+						<a href="/admin/frcr-subjects" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-book w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Subject</span>
+							<div class="tooltip">Subject</div>
 						</a>
-						<a href="/admin/frcr-quiz" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-quiz w-3 h-3 mr-2"></i>
-							<span>Quiz</span>
+						<a href="/admin/frcr-quiz" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-question-circle w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Quiz</span>
+							<div class="tooltip">Quiz</div>
 						</a>
-						<a href="/admin/frcr-questions" class="flex items-center px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-md transition-colors text-sm">
-							<i class="fas fa-question w-3 h-3 mr-2"></i>
-							<span>Question</span>
+						<a href="/admin/frcr-questions" class="menu-item flex items-center px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-md text-sm relative">
+							<i class="fas fa-question w-3 h-3 flex-shrink-0"></i>
+							<span class="sidebar-text ml-2">Question</span>
+							<div class="tooltip">Question</div>
 						</a>
 					</div>
 				</div>
