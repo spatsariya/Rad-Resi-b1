@@ -133,6 +133,10 @@ class Router {
         $this->post('/admin/notes/update-status', 'NotesController@updateStatus', ['auth']);
         $this->post('/admin/notes/update-order', 'NotesController@updateOrder', ['auth']);
         $this->get('/admin/notes/get-chapters', 'NotesController@getChapters', ['auth']);
+        
+        // Database Setup Routes
+        $this->get('/admin/setup-notes', 'SetupController@setupNotes', ['auth']);
+        $this->post('/admin/setup-notes', 'SetupController@setupNotes', ['auth']);
         $this->get('/admin/prev-year-questions', 'AdminController@prevYearQuestions', ['auth']);
         
         // Video Tutorial

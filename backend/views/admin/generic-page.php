@@ -99,6 +99,8 @@ $currentPath = $_SERVER['REQUEST_URI'];
 						include __DIR__ . '/content/notes-chapters-content.php';
 					} elseif ($basePath === '/admin/notes') {
 						include __DIR__ . '/content/notes-content.php';
+					} elseif ($basePath === '/admin/setup-notes') {
+						include __DIR__ . '/content/setup-notes-content.php';
 					} else {
 						// Default content for other pages
 						?>
