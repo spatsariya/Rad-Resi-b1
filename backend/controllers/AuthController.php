@@ -196,14 +196,13 @@ class AuthController extends BaseController
                 'first_name' => $firstName,
                 'last_name' => $lastName,
                 'email' => $email,
-                'phone' => $phone,
                 'password' => password_hash($password, PASSWORD_DEFAULT),
                 'specialization' => $specialization,
                 'experience_years' => $experienceYears ?: 0,
-                'institution' => $institution,
-                'newsletter' => $newsletter ? 1 : 0,
-                'role' => 'user',
+                'bio' => $institution, // Store institution in bio field
+                'role' => 'student', // Use 'student' instead of 'user' as per enum
                 'status' => 'active',
+                'email_verified' => 0,
                 'created_at' => date('Y-m-d H:i:s')
             ];
             

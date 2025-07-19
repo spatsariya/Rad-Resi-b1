@@ -17,13 +17,13 @@ class User
         try {
             $stmt = $this->db->prepare("
                 INSERT INTO users (
-                    first_name, last_name, email, phone, password, 
-                    specialization, experience_years, institution, 
-                    newsletter, role, status, created_at
+                    first_name, last_name, email, password, 
+                    specialization, experience_years, bio, 
+                    role, status, email_verified, created_at
                 ) VALUES (
-                    :first_name, :last_name, :email, :phone, :password,
-                    :specialization, :experience_years, :institution,
-                    :newsletter, :role, :status, :created_at
+                    :first_name, :last_name, :email, :password,
+                    :specialization, :experience_years, :bio,
+                    :role, :status, :email_verified, :created_at
                 )
             ");
             
