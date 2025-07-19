@@ -148,7 +148,7 @@
 			<!-- Registration Form -->
 			<form id="registerForm" class="mt-8 space-y-6 relative overflow-hidden">
 				<!-- CSRF Token -->
-				<input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
+				<input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
 				
 				<!-- Step 1: Personal Information -->
 				<div id="step1" class="step active space-y-4">
@@ -571,9 +571,17 @@
 			
 			try {
 				const formData = new FormData(this);
+				
+				// Ensure CSRF token is included
+				const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+				if (csrfToken) {
+					formData.set('csrf_token', csrfToken);
+				}
+				
 				const response = await fetch('/auth/register', {
 					method: 'POST',
-					body: formData
+					body: formData,
+					credentials: 'same-origin' // Important for session cookies
 				});
 				
 				const result = await response.json();

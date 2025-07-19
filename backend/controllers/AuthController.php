@@ -20,20 +20,24 @@ class AuthController extends BaseController
     
     public function registerForm()
     {
+        // Start session if not already started
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
         // Check if user is already logged in
         if ($this->isLoggedIn()) {
             $this->redirect('/admin');
             return;
         }
         
-        // Generate CSRF token if not exists
-        if (!isset($_SESSION['csrf_token'])) {
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-        }
+        // Generate CSRF token
+        $csrfToken = $this->generateCSRFToken();
         
         $data = [
             'title' => 'Register - Radiology Resident',
-            'description' => 'Create your Radiology Resident account'
+            'description' => 'Create your Radiology Resident account',
+            'csrf_token' => $csrfToken
         ];
         
         $this->view('auth/register', $data);
@@ -112,6 +116,11 @@ class AuthController extends BaseController
     
     public function register()
     {
+        // Start session if not already started
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect('/register');
             return;
@@ -119,7 +128,11 @@ class AuthController extends BaseController
         
         // Validate CSRF token
         if (!$this->validateCSRF()) {
-            $this->jsonResponse(['error' => 'Invalid CSRF token'], 403);
+            // Add more detailed error for debugging
+            $token = $_POST['csrf_token'] ?? 'missing';
+            $sessionToken = $_SESSION['csrf_token'] ?? 'missing';
+            error_log("CSRF validation failed. POST token: " . substr($token, 0, 10) . "..., Session token: " . substr($sessionToken, 0, 10) . "...");
+            $this->jsonResponse(['error' => 'Invalid CSRF token. Please refresh the page and try again.'], 403);
             return;
         }
         
