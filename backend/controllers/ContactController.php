@@ -227,8 +227,13 @@ class ContactController extends BaseController {
             return;
         }
         
-        $history = $this->messageModel->getMessageHistory($user_id);
-        $this->jsonResponse(['success' => true, 'history' => $history]);
+        try {
+            $history = $this->messageModel->getMessageHistory($user_id);
+            $this->jsonResponse(['success' => true, 'history' => $history]);
+        } catch (Exception $e) {
+            // If messaging tables don't exist yet, return empty history
+            $this->jsonResponse(['success' => true, 'history' => []]);
+        }
     }
     
     private function getContactStatistics() {
@@ -236,25 +241,45 @@ class ContactController extends BaseController {
         
         $stats = [];
         
-        // Total users
-        $stmt = $pdo->query("SELECT COUNT(*) as total FROM users");
-        $stats['total_users'] = $stmt->fetch()['total'];
-        
-        // Active users
-        $stmt = $pdo->query("SELECT COUNT(*) as active FROM users WHERE status = 'active'");
-        $stats['active_users'] = $stmt->fetch()['active'];
-        
-        // Newsletter subscribers
-        $stmt = $pdo->query("SELECT COUNT(*) as newsletter FROM users WHERE newsletter = 1");
-        $stats['newsletter_subscribers'] = $stmt->fetch()['newsletter'];
-        
-        // Messages sent today
-        $stmt = $pdo->query("SELECT COUNT(*) as today FROM messages WHERE DATE(created_at) = CURDATE()");
-        $stats['messages_sent_today'] = $stmt->fetch()['today'];
-        
-        // Total interactions
-        $stmt = $pdo->query("SELECT COUNT(*) as interactions FROM contact_interactions");
-        $stats['total_interactions'] = $stmt->fetch()['interactions'];
+        try {
+            // Total users
+            $stmt = $pdo->query("SELECT COUNT(*) as total FROM users");
+            $stats['total_users'] = $stmt->fetch()['total'];
+            
+            // Active users
+            $stmt = $pdo->query("SELECT COUNT(*) as active FROM users WHERE status = 'active'");
+            $stats['active_users'] = $stmt->fetch()['active'];
+            
+            // Newsletter subscribers
+            $stmt = $pdo->query("SELECT COUNT(*) as newsletter FROM users WHERE newsletter = 1");
+            $stats['newsletter_subscribers'] = $stmt->fetch()['newsletter'];
+            
+            // Messages sent today (check if table exists)
+            try {
+                $stmt = $pdo->query("SELECT COUNT(*) as today FROM messages WHERE DATE(created_at) = CURDATE()");
+                $stats['messages_sent_today'] = $stmt->fetch()['today'];
+            } catch (Exception $e) {
+                $stats['messages_sent_today'] = 0;
+            }
+            
+            // Total interactions (check if table exists)
+            try {
+                $stmt = $pdo->query("SELECT COUNT(*) as interactions FROM contact_interactions");
+                $stats['total_interactions'] = $stmt->fetch()['interactions'];
+            } catch (Exception $e) {
+                $stats['total_interactions'] = 0;
+            }
+            
+        } catch (Exception $e) {
+            // Default values if there are any database errors
+            $stats = [
+                'total_users' => 0,
+                'active_users' => 0,
+                'newsletter_subscribers' => 0,
+                'messages_sent_today' => 0,
+                'total_interactions' => 0
+            ];
+        }
         
         return $stats;
     }
@@ -262,8 +287,13 @@ class ContactController extends BaseController {
     private function getContactGroups() {
         $pdo = Database::getInstance()->connect();
         
-        $stmt = $pdo->query("SELECT * FROM contact_groups ORDER BY name");
-        return $stmt->fetchAll();
+        try {
+            $stmt = $pdo->query("SELECT * FROM contact_groups ORDER BY name");
+            return $stmt->fetchAll();
+        } catch (Exception $e) {
+            // Return empty array if table doesn't exist yet
+            return [];
+        }
     }
     
     private function getRecipientList($criteria, $selected_contacts = []) {
