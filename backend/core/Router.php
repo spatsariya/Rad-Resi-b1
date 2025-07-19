@@ -124,7 +124,15 @@ class Router {
         $this->post('/admin/notes-chapters/update-status', 'NotesChapterController@updateStatus', ['auth']);
         $this->post('/admin/notes-chapters/update-order', 'NotesChapterController@updateOrder', ['auth']);
         
-        $this->get('/admin/notes', 'AdminController@notes', ['auth']);
+        // Notes Management
+        $this->get('/admin/notes', 'NotesController@index', ['auth']);
+        $this->get('/admin/notes/get-note-details', 'NotesController@getNoteDetails', ['auth']);
+        $this->post('/admin/notes/create', 'NotesController@create', ['auth']);
+        $this->post('/admin/notes/update', 'NotesController@update', ['auth']);
+        $this->post('/admin/notes/delete', 'NotesController@delete', ['auth']);
+        $this->post('/admin/notes/update-status', 'NotesController@updateStatus', ['auth']);
+        $this->post('/admin/notes/update-order', 'NotesController@updateOrder', ['auth']);
+        $this->get('/admin/notes/get-chapters', 'NotesController@getChapters', ['auth']);
         $this->get('/admin/prev-year-questions', 'AdminController@prevYearQuestions', ['auth']);
         
         // Video Tutorial
