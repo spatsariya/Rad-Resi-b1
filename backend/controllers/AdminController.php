@@ -243,14 +243,15 @@ class AdminController extends BaseController
                 $whereClause = "WHERE (first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR 
                                CONCAT(first_name, ' ', last_name) LIKE ? OR 
                                specialization LIKE ? OR role LIKE ? OR 
-                               phone LIKE ? OR status LIKE ?)";
+                               phone LIKE ? OR institution LIKE ? OR status LIKE ?)";
                 $searchParam = "%$search%";
-                array_unshift($params, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam);
+                array_unshift($params, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam);
             }
             
             $stmt = $this->db->prepare("
                 SELECT id, email, first_name, last_name, role, status, last_login, created_at,
-                       specialization, phone, COALESCE(profile_picture, avatar) as profile_picture, experience_years
+                       specialization, phone, institution, newsletter, experience_years,
+                       COALESCE(profile_picture, avatar) as profile_picture
                 FROM users 
                 $whereClause
                 ORDER BY created_at DESC 
