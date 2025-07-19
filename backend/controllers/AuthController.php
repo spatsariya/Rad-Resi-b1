@@ -115,17 +115,96 @@ class AuthController extends BaseController
         }
         
         try {
-            // Test response first to ensure server is working
-            $this->jsonResponse([
-                'success' => false,
-                'error' => 'Test response - server is working',
-                'debug' => [
-                    'session_id' => session_id(),
-                    'post_data_received' => !empty($_POST),
-                    'csrf_token_received' => isset($_POST['csrf_token']) ? 'YES' : 'NO'
-                ]
-            ]);
-            return;
+            // Validate CSRF token
+            if (!$this->validateCSRF()) {
+                $this->jsonResponse([
+                    'error' => 'Invalid CSRF token. Please refresh the page and try again.',
+                    'debug' => [
+                        'session_id' => session_id(),
+                        'session_csrf' => $_SESSION['csrf_token'] ?? 'missing',
+                        'post_csrf' => $_POST['csrf_token'] ?? 'missing'
+                    ]
+                ], 403);
+                return;
+            }
+            
+            // Get and validate input
+            $firstName = filter_input(INPUT_POST, 'first_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $lastName = filter_input(INPUT_POST, 'last_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+            $phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $confirmPassword = filter_input(INPUT_POST, 'confirm_password', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $specialization = filter_input(INPUT_POST, 'specialization', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $experienceYears = filter_input(INPUT_POST, 'experience_years', FILTER_VALIDATE_INT);
+            $institution = filter_input(INPUT_POST, 'institution', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $newsletter = filter_input(INPUT_POST, 'newsletter', FILTER_VALIDATE_BOOLEAN);
+            
+            // Validate required fields
+            $errors = [];
+            if (empty($firstName)) $errors[] = 'First name is required';
+            if (empty($lastName)) $errors[] = 'Last name is required';
+            if (empty($email)) $errors[] = 'Email is required';
+            if (empty($password)) $errors[] = 'Password is required';
+            if (empty($specialization)) $errors[] = 'Specialization is required';
+            
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = 'Invalid email format';
+            }
+            
+            if (strlen($password) < 8) {
+                $errors[] = 'Password must be at least 8 characters long';
+            }
+            
+            if ($password !== $confirmPassword) {
+                $errors[] = 'Passwords do not match';
+            }
+            
+            if (!empty($errors)) {
+                $this->jsonResponse(['error' => implode('. ', $errors)], 400);
+                return;
+            }
+            
+            // Check if user already exists
+            $user = new User();
+            $existingUser = $user->findByEmail($email);
+            
+            if ($existingUser) {
+                $this->jsonResponse(['error' => 'Email already registered'], 400);
+                return;
+            }
+            
+            // Create new user
+            $userData = [
+                'first_name' => $firstName,
+                'last_name' => $lastName,
+                'email' => $email,
+                'phone' => $phone,
+                'password' => password_hash($password, PASSWORD_DEFAULT),
+                'specialization' => $specialization,
+                'experience_years' => $experienceYears ?: 0,
+                'institution' => $institution,
+                'newsletter' => $newsletter ? 1 : 0,
+                'role' => 'user',
+                'status' => 'active',
+                'created_at' => date('Y-m-d H:i:s')
+            ];
+            
+            $userId = $user->create($userData);
+            
+            if ($userId) {
+                // Start session for the new user
+                $newUser = $user->findById($userId);
+                $this->startSession($newUser);
+                
+                $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'Registration successful! Welcome to RadRes.',
+                    'redirect' => '/dashboard'
+                ]);
+            } else {
+                $this->jsonResponse(['error' => 'Registration failed. Please try again.'], 500);
+            }
             
         } catch (Exception $e) {
             error_log("Registration error: " . $e->getMessage());
