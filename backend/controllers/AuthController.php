@@ -26,6 +26,11 @@ class AuthController extends BaseController
             return;
         }
         
+        // Generate CSRF token if not exists
+        if (!isset($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+        
         $data = [
             'title' => 'Register - Radiology Resident',
             'description' => 'Create your Radiology Resident account'
@@ -121,9 +126,13 @@ class AuthController extends BaseController
         $firstName = filter_input(INPUT_POST, 'first_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $lastName = filter_input(INPUT_POST, 'last_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+        $phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $confirmPassword = filter_input(INPUT_POST, 'confirm_password', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $specialization = filter_input(INPUT_POST, 'specialization', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $experienceYears = filter_input(INPUT_POST, 'experience_years', FILTER_VALIDATE_INT);
+        $institution = filter_input(INPUT_POST, 'institution', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $newsletter = filter_input(INPUT_POST, 'newsletter', FILTER_VALIDATE_BOOLEAN);
         
         // Validate input
         $errors = [];
@@ -169,8 +178,9 @@ class AuthController extends BaseController
             
             // Insert user
             $stmt = $db->prepare("
-                INSERT INTO users (email, password, first_name, last_name, specialization, email_verification_token, created_at) 
-                VALUES (?, ?, ?, ?, ?, ?, NOW())
+                INSERT INTO users (email, password, first_name, last_name, phone, specialization, 
+                                 experience_years, email_verification_token, created_at) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
             ");
             
             $result = $stmt->execute([
@@ -178,7 +188,9 @@ class AuthController extends BaseController
                 $hashedPassword,
                 $firstName,
                 $lastName,
+                $phone,
                 $specialization,
+                $experienceYears,
                 $verificationToken
             ]);
             
