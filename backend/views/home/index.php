@@ -67,6 +67,19 @@
 		.text-darken {
 			color: #2F327D;
 		}
+		
+		/* Dropdown animations */
+		.rotate-180 {
+			transform: rotate(180deg);
+		}
+		
+		/* Custom dropdown transition */
+		[x-cloak] { display: none !important; }
+		
+		/* Ensure dropdowns appear above other content */
+		.relative .absolute {
+			z-index: 9999;
+		}
 	</style>
 </head>
 <body class="antialiased">
@@ -92,9 +105,51 @@
             </div>
             <nav :class="{ 'transform md:transform-none': !open, 'h-full': open }" class="h-0 md:h-auto flex flex-col flex-grow md:items-center pb-4 md:pb-0 md:flex md:justify-end md:flex-row origin-top duration-300 scale-y-0">
                 <a class="px-4 py-2 mt-2 text-sm bg-transparent rounded-lg md:mt-8 md:ml-4 hover:text-gray-900 focus:outline-none focus:shadow-outline" href="/">Home</a>
-                <a class="px-4 py-2 mt-2 text-sm bg-transparent rounded-lg md:mt-8 md:ml-4 hover:text-gray-900 focus:outline-none focus:shadow-outline" href="/courses">Courses</a>
-                <a class="px-4 py-2 mt-2 text-sm bg-transparent rounded-lg md:mt-8 md:ml-4 hover:text-gray-900 focus:outline-none focus:shadow-outline" href="/about">About Us</a>
-                <a class="px-4 py-2 mt-2 text-sm bg-transparent rounded-lg md:mt-8 md:ml-4 hover:text-gray-900 focus:outline-none focus:shadow-outline" href="/contact">Contact</a>
+                
+                <!-- Theory Exams Dropdown -->
+                <div class="relative" x-data="{ theoryOpen: false }">
+                    <button @click="theoryOpen = !theoryOpen" class="px-4 py-2 mt-2 text-sm bg-transparent rounded-lg md:mt-8 md:ml-4 hover:text-gray-900 focus:outline-none focus:shadow-outline flex items-center">
+                        Theory Exams
+                        <i class="fas fa-chevron-down ml-1 text-xs" :class="{ 'rotate-180': theoryOpen }"></i>
+                    </button>
+                    <div x-show="theoryOpen" @click.away="theoryOpen = false" x-transition class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50 md:left-auto md:right-0">
+                        <a href="/theory/notes" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Notes</a>
+                        <a href="/theory/previous-year-questions" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Previous Year Questions</a>
+                        <a href="/theory/video-tutorials" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Video Tutorial</a>
+                    </div>
+                </div>
+                
+                <!-- Practical Exams Dropdown -->
+                <div class="relative" x-data="{ practicalOpen: false }">
+                    <button @click="practicalOpen = !practicalOpen" class="px-4 py-2 mt-2 text-sm bg-transparent rounded-lg md:mt-8 md:ml-4 hover:text-gray-900 focus:outline-none focus:shadow-outline flex items-center">
+                        Practical Exams
+                        <i class="fas fa-chevron-down ml-1 text-xs" :class="{ 'rotate-180': practicalOpen }"></i>
+                    </button>
+                    <div x-show="practicalOpen" @click.away="practicalOpen = false" x-transition class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50 md:left-auto md:right-0">
+                        <a href="/practical/spotters" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Spotters</a>
+                        <a href="/practical/osce" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">OSCE</a>
+                        <a href="/practical/exam-cases" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Exam Cases</a>
+                        <a href="/practical/table-viva" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Table Viva</a>
+                    </div>
+                </div>
+                
+                <!-- Practice Cases & Quiz Dropdown -->
+                <div class="relative" x-data="{ practiceOpen: false }">
+                    <button @click="practiceOpen = !practiceOpen" class="px-4 py-2 mt-2 text-sm bg-transparent rounded-lg md:mt-8 md:ml-4 hover:text-gray-900 focus:outline-none focus:shadow-outline flex items-center">
+                        Practice & Quiz
+                        <i class="fas fa-chevron-down ml-1 text-xs" :class="{ 'rotate-180': practiceOpen }"></i>
+                    </button>
+                    <div x-show="practiceOpen" @click.away="practiceOpen = false" x-transition class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50 md:left-auto md:right-0">
+                        <a href="/practice/spotters" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Spotters</a>
+                        <a href="/practice/osce" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">OSCE</a>
+                        <a href="/practice/exam-cases" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Exam Cases</a>
+                        <a href="/practice/table-viva" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Table Viva</a>
+                    </div>
+                </div>
+                
+                <a class="px-4 py-2 mt-2 text-sm bg-transparent rounded-lg md:mt-8 md:ml-4 hover:text-gray-900 focus:outline-none focus:shadow-outline" href="/testimonials">Testimonials</a>
+                <a class="px-4 py-2 mt-2 text-sm bg-transparent rounded-lg md:mt-8 md:ml-4 hover:text-gray-900 focus:outline-none focus:shadow-outline" href="/blog">Blog</a>
+                <a class="px-4 py-2 mt-2 text-sm bg-transparent rounded-lg md:mt-8 md:ml-4 hover:text-gray-900 focus:outline-none focus:shadow-outline" href="/plans">Plans</a>
                 <a class="px-10 py-3 mt-2 text-sm text-center bg-white text-gray-800 rounded-full md:mt-8 md:ml-4" href="/login">Login</a>
                 <a class="px-10 py-3 mt-2 text-sm text-center bg-blue-500 text-white rounded-full md:mt-8 md:ml-4" href="/register">Sign Up</a>
             </nav>

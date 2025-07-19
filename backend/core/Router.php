@@ -65,6 +65,28 @@ class Router {
         $this->get('/register', 'AuthController@registerForm');
         $this->get('/contact', 'HomeController@contact');
         
+        // Theory Exams Routes
+        $this->get('/theory/notes', 'TheoryController@notes');
+        $this->get('/theory/previous-year-questions', 'TheoryController@previousYearQuestions');
+        $this->get('/theory/video-tutorials', 'TheoryController@videoTutorials');
+        
+        // Practical Exams Routes
+        $this->get('/practical/spotters', 'PracticalController@spotters');
+        $this->get('/practical/osce', 'PracticalController@osce');
+        $this->get('/practical/exam-cases', 'PracticalController@examCases');
+        $this->get('/practical/table-viva', 'PracticalController@tableViva');
+        
+        // Practice & Quiz Routes
+        $this->get('/practice/spotters', 'PracticeController@spotters');
+        $this->get('/practice/osce', 'PracticeController@osce');
+        $this->get('/practice/exam-cases', 'PracticeController@examCases');
+        $this->get('/practice/table-viva', 'PracticeController@tableViva');
+        
+        // Content Pages Routes
+        $this->get('/testimonials', 'HomeController@testimonials');
+        $this->get('/blog', 'HomeController@blog');
+        $this->get('/plans', 'HomeController@plans');
+        
         // Auth Routes
         $this->post('/auth/login', 'AuthController@login');
         $this->post('/auth/register', 'AuthController@register');

@@ -192,5 +192,159 @@ class HomeController extends BaseController {
             ]
         ];
     }
+    
+    /**
+     * Testimonials page
+     */
+    public function testimonials() {
+        $data = [
+            'title' => 'Testimonials - Radiology Resident',
+            'description' => 'What our students say about their learning experience',
+            'page_title' => 'Student Testimonials',
+            'page_description' => 'Hear from our successful students and graduates',
+            'testimonials' => $this->getTestimonials()
+        ];
+        
+        $this->view('frontend/testimonials', $data);
+    }
+    
+    /**
+     * Blog page
+     */
+    public function blog() {
+        $data = [
+            'title' => 'Blog - Radiology Resident',
+            'description' => 'Latest insights and articles on radiology education',
+            'page_title' => 'Radiology Blog',
+            'page_description' => 'Expert insights, tips, and latest developments in radiology',
+            'blog_posts' => $this->getBlogPosts()
+        ];
+        
+        $this->view('frontend/blog', $data);
+    }
+    
+    /**
+     * Plans page
+     */
+    public function plans() {
+        $data = [
+            'title' => 'Subscription Plans - Radiology Resident',
+            'description' => 'Choose the perfect plan for your radiology education journey',
+            'page_title' => 'Subscription Plans',
+            'page_description' => 'Flexible plans designed for medical students and residents',
+            'plans' => $this->getSubscriptionPlans()
+        ];
+        
+        $this->view('frontend/plans', $data);
+    }
+    
+    /**
+     * Get testimonials data
+     */
+    private function getTestimonials() {
+        // Mock data - replace with database queries
+        return [
+            [
+                'id' => 1,
+                'name' => 'Dr. Sarah Johnson',
+                'position' => 'Radiology Resident',
+                'institution' => 'Johns Hopkins Hospital',
+                'content' => 'The comprehensive courses and practical spotters helped me excel in my radiology exams.',
+                'rating' => 5,
+                'image' => 'https://ui-avatars.com/api/?name=Sarah+Johnson&background=3b82f6&color=fff'
+            ],
+            [
+                'id' => 2,
+                'name' => 'Dr. Michael Chen',
+                'position' => 'Medical Student',
+                'institution' => 'Harvard Medical School',
+                'content' => 'The OSCE practice sessions were invaluable for my clinical rotations.',
+                'rating' => 5,
+                'image' => 'https://ui-avatars.com/api/?name=Michael+Chen&background=10b981&color=fff'
+            ]
+        ];
+    }
+    
+    /**
+     * Get blog posts data
+     */
+    private function getBlogPosts() {
+        // Mock data - replace with database queries
+        return [
+            [
+                'id' => 1,
+                'title' => 'Understanding Chest X-Ray Interpretation',
+                'excerpt' => 'A comprehensive guide to systematic chest X-ray interpretation for medical students.',
+                'author' => 'Dr. Emily Rodriguez',
+                'date' => '2025-01-15',
+                'image' => 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800&h=400&fit=crop',
+                'category' => 'Education'
+            ],
+            [
+                'id' => 2,
+                'title' => 'Latest Advances in MRI Technology',
+                'excerpt' => 'Exploring the latest developments in magnetic resonance imaging technology.',
+                'author' => 'Dr. James Smith',
+                'date' => '2025-01-10',
+                'image' => 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=800&h=400&fit=crop',
+                'category' => 'Technology'
+            ]
+        ];
+    }
+    
+    /**
+     * Get subscription plans data
+     */
+    private function getSubscriptionPlans() {
+        // Mock data - replace with database queries
+        return [
+            [
+                'id' => 1,
+                'name' => 'Basic',
+                'price' => 29,
+                'period' => 'month',
+                'description' => 'Perfect for medical students starting their radiology journey',
+                'features' => [
+                    'Access to theory notes',
+                    'Basic video tutorials',
+                    'Practice questions',
+                    'Email support'
+                ],
+                'popular' => false
+            ],
+            [
+                'id' => 2,
+                'name' => 'Professional',
+                'price' => 79,
+                'period' => 'month',
+                'description' => 'Ideal for residents and advanced students',
+                'features' => [
+                    'Everything in Basic',
+                    'OSCE practice sessions',
+                    'Advanced spotters',
+                    'Table viva preparation',
+                    'Priority support',
+                    'Downloadable resources'
+                ],
+                'popular' => true
+            ],
+            [
+                'id' => 3,
+                'name' => 'Premium',
+                'price' => 149,
+                'period' => 'month',
+                'description' => 'Complete access for serious professionals',
+                'features' => [
+                    'Everything in Professional',
+                    'One-on-one mentoring',
+                    'Custom study plans',
+                    'Exclusive masterclasses',
+                    '24/7 expert support',
+                    'Certification courses'
+                ],
+                'popular' => false
+            ]
+        ];
+    }
 }
 ?>
