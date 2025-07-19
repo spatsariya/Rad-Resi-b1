@@ -51,23 +51,27 @@ class AdminController extends BaseController
     public function users()
     {
         $page = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?: 1;
+        $search = filter_input(INPUT_GET, 'search', FILTER_SANITIZE_STRING) ?: '';
         $limit = 15;
         $offset = ($page - 1) * $limit;
         
-        $users = $this->getUsers($limit, $offset);
-        $totalUsers = $this->getTotalUsers();
+        $users = $this->getUsers($limit, $offset, $search);
+        $totalUsers = $this->getTotalUsers($search);
         $totalPages = ceil($totalUsers / $limit);
         
         $data = [
-            'title' => 'Manage Users - Admin',
+            'title' => 'All Users - User Management',
             'description' => 'Manage all users in the platform',
+            'page_title' => 'All Users',
+            'page_description' => 'View and manage all registered users',
             'users' => $users,
             'current_page' => $page,
             'total_pages' => $totalPages,
-            'total_users' => $totalUsers
+            'total_users' => $totalUsers,
+            'search' => $search
         ];
         
-        $this->view('admin/users', $data);
+        $this->view('admin/generic-page', $data);
     }
     
     public function createCourse()
@@ -229,16 +233,30 @@ class AdminController extends BaseController
         }
     }
     
-    private function getUsers($limit, $offset)
+    private function getUsers($limit, $offset, $search = '')
     {
         try {
+            $whereClause = '';
+            $params = [$limit, $offset];
+            
+            if (!empty($search)) {
+                $whereClause = "WHERE (first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR 
+                               CONCAT(first_name, ' ', last_name) LIKE ? OR 
+                               specialization LIKE ? OR role LIKE ? OR 
+                               phone LIKE ? OR status LIKE ?)";
+                $searchParam = "%$search%";
+                array_unshift($params, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam);
+            }
+            
             $stmt = $this->db->prepare("
-                SELECT id, email, first_name, last_name, role, status, last_login, created_at
+                SELECT id, email, first_name, last_name, role, status, last_login, created_at,
+                       specialization, phone, COALESCE(profile_picture, avatar) as profile_picture, experience_years
                 FROM users 
+                $whereClause
                 ORDER BY created_at DESC 
                 LIMIT ? OFFSET ?
             ");
-            $stmt->execute([$limit, $offset]);
+            $stmt->execute($params);
             return $stmt->fetchAll();
         } catch (Exception $e) {
             error_log("Error getting users: " . $e->getMessage());
@@ -246,11 +264,23 @@ class AdminController extends BaseController
         }
     }
     
-    private function getTotalUsers()
+    private function getTotalUsers($search = '')
     {
         try {
-            $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM users");
-            $stmt->execute();
+            $whereClause = '';
+            $params = [];
+            
+            if (!empty($search)) {
+                $whereClause = "WHERE (first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR 
+                               CONCAT(first_name, ' ', last_name) LIKE ? OR 
+                               specialization LIKE ? OR role LIKE ? OR 
+                               phone LIKE ? OR status LIKE ?)";
+                $searchParam = "%$search%";
+                $params = [$searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam];
+            }
+            
+            $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM users $whereClause");
+            $stmt->execute($params);
             return $stmt->fetch()['count'];
         } catch (Exception $e) {
             error_log("Error getting total users: " . $e->getMessage());
@@ -466,6 +496,167 @@ class AdminController extends BaseController
     public function reports()
     {
         $this->renderAdminPage('Reports & Notifications', 'View reports and manage notifications');
+    }
+    
+    // User Management API Methods
+    public function toggleUserStatus()
+    {
+        header('Content-Type: application/json');
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['success' => false, 'message' => 'Method not allowed']);
+            return;
+        }
+        
+        $userId = filter_input(INPUT_POST, 'user_id', FILTER_VALIDATE_INT);
+        $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_STRING);
+        
+        if (!$userId || !in_array($status, ['active', 'inactive'])) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Invalid parameters']);
+            return;
+        }
+        
+        try {
+            $stmt = $this->db->prepare("UPDATE users SET status = ? WHERE id = ?");
+            $result = $stmt->execute([$status, $userId]);
+            
+            if ($result) {
+                echo json_encode(['success' => true, 'message' => 'User status updated successfully']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Failed to update user status']);
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Database error']);
+        }
+    }
+    
+    public function deleteUser()
+    {
+        header('Content-Type: application/json');
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['success' => false, 'message' => 'Method not allowed']);
+            return;
+        }
+        
+        $userId = filter_input(INPUT_POST, 'user_id', FILTER_VALIDATE_INT);
+        
+        if (!$userId) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Invalid user ID']);
+            return;
+        }
+        
+        try {
+            // Check if user is admin
+            $stmt = $this->db->prepare("SELECT role FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch();
+            
+            if ($user && $user['role'] === 'admin') {
+                echo json_encode(['success' => false, 'message' => 'Cannot delete admin user']);
+                return;
+            }
+            
+            $stmt = $this->db->prepare("DELETE FROM users WHERE id = ?");
+            $result = $stmt->execute([$userId]);
+            
+            if ($result) {
+                echo json_encode(['success' => true, 'message' => 'User deleted successfully']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Failed to delete user']);
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Database error']);
+        }
+    }
+    
+    public function getUserData()
+    {
+        header('Content-Type: application/json');
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+            http_response_code(405);
+            echo json_encode(['success' => false, 'message' => 'Method not allowed']);
+            return;
+        }
+        
+        $userId = filter_input(INPUT_GET, 'user_id', FILTER_VALIDATE_INT);
+        
+        if (!$userId) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Invalid user ID']);
+            return;
+        }
+        
+        try {
+            $stmt = $this->db->prepare("
+                SELECT id, email, first_name, last_name, role, status, specialization, 
+                       phone, COALESCE(profile_picture, avatar) as profile_picture, experience_years, created_at, last_login
+                FROM users WHERE id = ?
+            ");
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch();
+            
+            if ($user) {
+                echo json_encode(['success' => true, 'user' => $user]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'User not found']);
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Database error']);
+        }
+    }
+    
+    public function updateUser()
+    {
+        header('Content-Type: application/json');
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['success' => false, 'message' => 'Method not allowed']);
+            return;
+        }
+        
+        $userId = filter_input(INPUT_POST, 'user_id', FILTER_VALIDATE_INT);
+        $firstName = filter_input(INPUT_POST, 'first_name', FILTER_SANITIZE_STRING);
+        $lastName = filter_input(INPUT_POST, 'last_name', FILTER_SANITIZE_STRING);
+        $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+        $phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_STRING);
+        $specialization = filter_input(INPUT_POST, 'specialization', FILTER_SANITIZE_STRING);
+        $role = filter_input(INPUT_POST, 'role', FILTER_SANITIZE_STRING);
+        $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_STRING);
+        
+        if (!$userId || !$firstName || !$lastName || !$email) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Required fields missing']);
+            return;
+        }
+        
+        try {
+            $stmt = $this->db->prepare("
+                UPDATE users SET 
+                    first_name = ?, last_name = ?, email = ?, phone = ?, 
+                    specialization = ?, role = ?, status = ?
+                WHERE id = ?
+            ");
+            $result = $stmt->execute([$firstName, $lastName, $email, $phone, $specialization, $role, $status, $userId]);
+            
+            if ($result) {
+                echo json_encode(['success' => true, 'message' => 'User updated successfully']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Failed to update user']);
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+        }
     }
     
     // General Settings Methods

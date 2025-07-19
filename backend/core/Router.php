@@ -102,6 +102,10 @@ class Router {
         
         // Users Management
         $this->get('/admin/users', 'AdminController@users', ['auth']);
+        $this->post('/api/admin/users/toggle-status', 'AdminController@toggleUserStatus', ['auth']);
+        $this->post('/api/admin/users/delete', 'AdminController@deleteUser', ['auth']);
+        $this->get('/api/admin/users/get', 'AdminController@getUserData', ['auth']);
+        $this->post('/api/admin/users/update', 'AdminController@updateUser', ['auth']);
         $this->get('/admin/contacts', 'AdminController@contacts', ['auth']);
         
         // Theory Exams

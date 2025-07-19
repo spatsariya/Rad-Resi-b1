@@ -81,28 +81,42 @@ $currentPath = $_SERVER['REQUEST_URI'];
 			<!-- Main Content Area -->
 			<main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
 				<div class="max-w-7xl mx-auto">
-					<!-- Content Card -->
-					<div class="bg-white rounded-lg shadow-sm p-6">
-						<div class="text-center py-12">
-							<i class="fas fa-tools text-6xl text-gray-300 mb-4"></i>
-							<h2 class="text-2xl font-semibold text-gray-900 mb-2"><?php echo $page_title ?? 'Page Under Development'; ?></h2>
-							<p class="text-gray-600 mb-6"><?php echo $page_description ?? 'This page is currently being developed and will be available soon.'; ?></p>
-							
-							<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
-								<div class="flex items-center">
-									<i class="fas fa-info-circle text-blue-500 mr-2"></i>
-									<p class="text-blue-700 text-sm">This section will include comprehensive management tools for this feature.</p>
+					<?php
+					// Get current path to determine which content to show
+					$currentPath = $_SERVER['REQUEST_URI'];
+					$pathParts = explode('?', $currentPath);
+					$basePath = $pathParts[0];
+					
+					if ($basePath === '/admin/users') {
+						include __DIR__ . '/content/users-content.php';
+					} else {
+						// Default content for other pages
+						?>
+						<!-- Content Card -->
+						<div class="bg-white rounded-lg shadow-sm p-6">
+							<div class="text-center py-12">
+								<i class="fas fa-tools text-6xl text-gray-300 mb-4"></i>
+								<h2 class="text-2xl font-semibold text-gray-900 mb-2"><?php echo $page_title ?? 'Page Under Development'; ?></h2>
+								<p class="text-gray-600 mb-6"><?php echo $page_description ?? 'This page is currently being developed and will be available soon.'; ?></p>
+								
+								<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
+									<div class="flex items-center">
+										<i class="fas fa-info-circle text-blue-500 mr-2"></i>
+										<p class="text-blue-700 text-sm">This section will include comprehensive management tools for this feature.</p>
+									</div>
+								</div>
+								
+								<div class="mt-6">
+									<a href="/admin" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+										<i class="fas fa-arrow-left mr-2"></i>
+										Back to Dashboard
+									</a>
 								</div>
 							</div>
-							
-							<div class="mt-6">
-								<a href="/admin" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-									<i class="fas fa-arrow-left mr-2"></i>
-									Back to Dashboard
-								</a>
-							</div>
 						</div>
-					</div>
+						<?php
+					}
+					?>
 				</div>
 			</main>
 		</div>
