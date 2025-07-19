@@ -2,25 +2,37 @@
 require_once __DIR__ . '/config/config.php';
 
 try {
-    $dsn = "mysql:host={$config['db']['host']};dbname={$config['db']['database']}";
-    $pdo = new PDO($dsn, $config['db']['username'], $config['db']['password']);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $mysqli = new mysqli(
+        $config['db']['host'], 
+        $config['db']['username'], 
+        $config['db']['password'], 
+        $config['db']['database']
+    );
+    
+    if ($mysqli->connect_error) {
+        throw new Exception("Connection failed: " . $mysqli->connect_error);
+    }
     
     $sql = file_get_contents(__DIR__ . '/contact_management_schema.sql');
     
-    // Split by semicolon and execute each statement
-    $statements = array_filter(array_map('trim', explode(';', $sql)));
+    // Execute multi-query
+    if ($mysqli->multi_query($sql)) {
+        do {
+            // Store first result set
+            if ($result = $mysqli->store_result()) {
+                $result->free();
+            }
+        } while ($mysqli->next_result());
+    }
     
-    foreach ($statements as $statement) {
-        if (!empty($statement)) {
-            $pdo->exec($statement);
-        }
+    if ($mysqli->error) {
+        throw new Exception("SQL Error: " . $mysqli->error);
     }
     
     echo "Contact management schema executed successfully!\n";
     
-} catch (PDOException $e) {
-    echo "Database error: " . $e->getMessage() . "\n";
+    $mysqli->close();
+    
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";
 }
