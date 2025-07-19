@@ -21,42 +21,87 @@ class PlanController extends BaseController
             exit;
         }
         
-        // Get filter parameters
-        $search = $_GET['search'] ?? '';
-        $page = max(1, intval($_GET['page'] ?? 1));
-        $per_page = 20;
-        $offset = ($page - 1) * $per_page;
-        
-        // Get plans
-        $plans = $this->planModel->getAll($search, $per_page, $offset);
-        
-        // Decode features for each plan
-        foreach ($plans as &$plan) {
-            $plan['features'] = json_decode($plan['features'], true) ?? [];
+        try {
+            // Get filter parameters
+            $search = $_GET['search'] ?? '';
+            $page = max(1, intval($_GET['page'] ?? 1));
+            $per_page = 20;
+            $offset = ($page - 1) * $per_page;
+            
+            // Check if plans table exists
+            if (!$this->checkPlansTable()) {
+                // Show setup message if table doesn't exist
+                $data = [
+                    'title' => 'Plans Management - Admin Panel',
+                    'description' => 'Manage subscription plans and pricing',
+                    'page_title' => 'Plans Management',
+                    'page_description' => 'Create, modify, and manage subscription plans',
+                    'table_missing' => true
+                ];
+                $this->view('admin/generic-page', $data);
+                return;
+            }
+            
+            // Get plans
+            $plans = $this->planModel->getAll($search, $per_page, $offset);
+            
+            // Decode features for each plan
+            foreach ($plans as &$plan) {
+                $plan['features'] = json_decode($plan['features'], true) ?? [];
+            }
+            
+            // Get total count for pagination
+            $total_plans = $this->planModel->count($search);
+            $total_pages = ceil($total_plans / $per_page);
+            
+            // Get statistics
+            $stats = $this->planModel->getStatistics();
+            
+            // Prepare data for view
+            $data = [
+                'title' => 'Plans Management - Admin Panel',
+                'description' => 'Manage subscription plans and pricing',
+                'page_title' => 'Plans Management',
+                'page_description' => 'Create, modify, and manage subscription plans',
+                'plans' => $plans,
+                'total_plans' => $total_plans,
+                'current_page' => $page,
+                'total_pages' => $total_pages,
+                'search' => $search,
+                'stats' => $stats,
+                'table_missing' => false
+            ];
+            
+            $this->view('admin/generic-page', $data);
+            
+        } catch (Exception $e) {
+            error_log("Plans page error: " . $e->getMessage());
+            
+            // Show error message
+            $data = [
+                'title' => 'Plans Management - Admin Panel',
+                'description' => 'Manage subscription plans and pricing',
+                'page_title' => 'Plans Management',
+                'page_description' => 'Create, modify, and manage subscription plans',
+                'error_message' => 'Error loading plans: ' . $e->getMessage(),
+                'table_missing' => false
+            ];
+            $this->view('admin/generic-page', $data);
         }
-        
-        // Get total count for pagination
-        $total_plans = $this->planModel->count($search);
-        $total_pages = ceil($total_plans / $per_page);
-        
-        // Get statistics
-        $stats = $this->planModel->getStatistics();
-        
-        // Prepare data for view
-        $data = [
-            'title' => 'Plans Management - Admin Panel',
-            'description' => 'Manage subscription plans and pricing',
-            'page_title' => 'Plans Management',
-            'page_description' => 'Create, modify, and manage subscription plans',
-            'plans' => $plans,
-            'total_plans' => $total_plans,
-            'current_page' => $page,
-            'total_pages' => $total_pages,
-            'search' => $search,
-            'stats' => $stats
-        ];
-        
-        $this->view('admin/generic-page', $data);
+    }
+    
+    /**
+     * Check if plans table exists
+     */
+    private function checkPlansTable()
+    {
+        try {
+            $db = Database::getInstance();
+            $result = $db->fetch("SHOW TABLES LIKE 'plans'");
+            return !empty($result);
+        } catch (Exception $e) {
+            return false;
+        }
     }
     
     /**

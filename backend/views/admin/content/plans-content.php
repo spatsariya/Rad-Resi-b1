@@ -1,4 +1,67 @@
 <!-- Plans Management Content -->
+<?php if (isset($table_missing) && $table_missing): ?>
+    <!-- Database Setup Required -->
+    <div class="space-y-6">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="text-center py-12">
+                <i class="fas fa-database text-6xl text-yellow-500 mb-4"></i>
+                <h2 class="text-2xl font-semibold text-gray-900 mb-2">Database Setup Required</h2>
+                <p class="text-gray-600 mb-6">The plans table needs to be created before you can manage subscription plans.</p>
+                
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-2xl mx-auto mb-6">
+                    <div class="flex items-start">
+                        <i class="fas fa-exclamation-triangle text-yellow-500 mr-3 mt-1"></i>
+                        <div class="text-left">
+                            <h4 class="text-sm font-medium text-yellow-800 mb-2">SQL Required:</h4>
+                            <p class="text-sm text-yellow-700 mb-3">Please run this SQL command in your database:</p>
+                            <div class="bg-gray-900 text-green-400 p-3 rounded text-xs font-mono overflow-x-auto">
+CREATE TABLE plans (<br>
+&nbsp;&nbsp;id INT AUTO_INCREMENT PRIMARY KEY,<br>
+&nbsp;&nbsp;name VARCHAR(100) NOT NULL,<br>
+&nbsp;&nbsp;description TEXT NOT NULL,<br>
+&nbsp;&nbsp;price VARCHAR(20) NOT NULL,<br>
+&nbsp;&nbsp;period ENUM('month', 'year', 'lifetime') NOT NULL,<br>
+&nbsp;&nbsp;features JSON NOT NULL,<br>
+&nbsp;&nbsp;icon VARCHAR(50) DEFAULT 'fas fa-star',<br>
+&nbsp;&nbsp;is_popular BOOLEAN DEFAULT FALSE,<br>
+&nbsp;&nbsp;is_active BOOLEAN DEFAULT TRUE,<br>
+&nbsp;&nbsp;order_index INT DEFAULT 0,<br>
+&nbsp;&nbsp;created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,<br>
+&nbsp;&nbsp;updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP<br>
+);
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <button onclick="location.reload()" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-refresh mr-2"></i>
+                        Refresh Page After Setup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php elseif (isset($error_message)): ?>
+    <!-- Error State -->
+    <div class="space-y-6">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="text-center py-12">
+                <i class="fas fa-exclamation-circle text-6xl text-red-500 mb-4"></i>
+                <h2 class="text-2xl font-semibold text-gray-900 mb-2">Error Loading Plans</h2>
+                <p class="text-red-600 mb-6"><?php echo htmlspecialchars($error_message); ?></p>
+                
+                <div class="mt-6">
+                    <button onclick="location.reload()" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-refresh mr-2"></i>
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php else: ?>
 <div class="space-y-6">
     <!-- Header Section -->
     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -630,3 +693,4 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeFeatures();
 });
 </script>
+<?php endif; ?>
