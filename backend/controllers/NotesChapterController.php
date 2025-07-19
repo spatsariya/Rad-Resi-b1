@@ -146,6 +146,7 @@ class NotesChapterController extends BaseController
                 $data = [
                     'chapter_name' => $chapter_name,
                     'sub_chapter_name' => trim($_POST['sub_chapter_name'] ?? ''),
+                    'parent_id' => !empty($_POST['parent_id']) ? intval($_POST['parent_id']) : null,
                     'description' => trim($_POST['description'] ?? ''),
                     'display_order' => intval($_POST['display_order'] ?? 0),
                     'status' => $_POST['status'] ?? 'active'
@@ -211,6 +212,7 @@ class NotesChapterController extends BaseController
                 $data = [
                     'chapter_name' => $chapter_name,
                     'sub_chapter_name' => trim($_POST['sub_chapter_name'] ?? ''),
+                    'parent_id' => !empty($_POST['parent_id']) ? intval($_POST['parent_id']) : null,
                     'description' => trim($_POST['description'] ?? ''),
                     'display_order' => intval($_POST['display_order'] ?? $existingChapter['display_order']),
                     'status' => $_POST['status'] ?? $existingChapter['status'],
@@ -381,6 +383,26 @@ class NotesChapterController extends BaseController
             }
         } else {
             $this->jsonResponse(['success' => false, 'message' => 'Invalid request method']);
+        }
+    }
+    
+    /**
+     * Get main chapters (without parent_id) for dropdown
+     */
+    public function getMainChapters()
+    {
+        if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_role'], ['admin', 'instructor'])) {
+            $this->jsonResponse(['success' => false, 'message' => 'Unauthorized']);
+            return;
+        }
+        
+        try {
+            $chapters = $this->notesChapterModel->getMainChapters();
+            $this->jsonResponse(['success' => true, 'chapters' => $chapters]);
+            
+        } catch (Exception $e) {
+            error_log("Get main chapters error: " . $e->getMessage());
+            $this->jsonResponse(['success' => false, 'message' => 'Error loading main chapters: ' . $e->getMessage()]);
         }
     }
 }

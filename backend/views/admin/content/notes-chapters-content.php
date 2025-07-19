@@ -70,10 +70,14 @@ CREATE TABLE notes_chapters (<br>
                 <h1 class="text-2xl font-bold text-gray-900">Notes Chapters Management</h1>
                 <p class="mt-1 text-sm text-gray-600">Create and manage theory exam notes chapters</p>
             </div>
-            <div class="mt-4 sm:mt-0">
-                <button id="addChapterBtn" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors mr-2">
+            <div class="mt-4 sm:mt-0 flex flex-wrap gap-2">
+                <button id="addChapterBtn" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
                     <i class="fas fa-plus mr-2"></i>
                     Add Chapter
+                </button>
+                <button id="addSubChapterBtn" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+                    <i class="fas fa-plus mr-2"></i>
+                    Add Sub-Chapter
                 </button>
                 <button id="refreshBtn" class="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors">
                     <i class="fas fa-sync-alt mr-2"></i>
@@ -217,17 +221,23 @@ CREATE TABLE notes_chapters (<br>
                                 <!-- Chapter Details -->
                                 <td class="px-6 py-4">
                                     <div>
-                                        <div class="text-sm font-medium text-gray-900">
+                                        <div class="text-sm font-medium text-gray-900 flex items-center">
+                                            <?php if (!empty($chapter['parent_id'])): ?>
+                                                <i class="fas fa-level-up-alt text-gray-400 mr-2 transform rotate-90"></i>
+                                                <span class="text-blue-600">Sub:</span>
+                                            <?php else: ?>
+                                                <i class="fas fa-folder text-blue-500 mr-2"></i>
+                                            <?php endif; ?>
                                             <?php echo htmlspecialchars($chapter['chapter_name']); ?>
                                         </div>
                                         <?php if (!empty($chapter['sub_chapter_name'])): ?>
-                                            <div class="text-sm text-blue-600 mt-1">
+                                            <div class="text-sm text-blue-600 mt-1 ml-6">
                                                 <i class="fas fa-arrow-right mr-1"></i>
                                                 <?php echo htmlspecialchars($chapter['sub_chapter_name']); ?>
                                             </div>
                                         <?php endif; ?>
                                         <?php if (!empty($chapter['description'])): ?>
-                                            <div class="text-sm text-gray-500 mt-1">
+                                            <div class="text-sm text-gray-500 mt-1 ml-6">
                                                 <?php echo htmlspecialchars(substr($chapter['description'], 0, 100)) . (strlen($chapter['description']) > 100 ? '...' : ''); ?>
                                             </div>
                                         <?php endif; ?>
@@ -376,20 +386,26 @@ CREATE TABLE notes_chapters (<br>
         
         <form id="chapterForm" enctype="multipart/form-data">
             <input type="hidden" id="chapterId" name="chapter_id">
+            <input type="hidden" id="formType" name="form_type" value="chapter">
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <!-- Parent Chapter Selection (only for sub-chapters) -->
+            <div id="parentChapterSection" class="mb-4 hidden">
+                <label for="parentChapter" class="block text-sm font-medium text-gray-700 mb-2">Parent Chapter *</label>
+                <select id="parentChapter" name="parent_id"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">Select Parent Chapter</option>
+                    <!-- Options will be loaded dynamically -->
+                </select>
+            </div>
+            
+            <div class="grid grid-cols-1 gap-4 mb-4">
                 <div>
-                    <label for="chapterName" class="block text-sm font-medium text-gray-700 mb-2">Chapter Name *</label>
+                    <label for="chapterName" class="block text-sm font-medium text-gray-700 mb-2">
+                        <span id="chapterNameLabel">Chapter Name</span> *
+                    </label>
                     <input type="text" id="chapterName" name="chapter_name" required
                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                            placeholder="Enter chapter name">
-                </div>
-                
-                <div>
-                    <label for="subChapterName" class="block text-sm font-medium text-gray-700 mb-2">Sub Chapter Name</label>
-                    <input type="text" id="subChapterName" name="sub_chapter_name"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                           placeholder="Enter sub chapter name">
                 </div>
             </div>
             
@@ -486,9 +502,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     let isEditMode = false;
     
-    // Add Chapter button
-    document.getElementById('addChapterBtn').addEventListener('click', openAddModal);
-    document.getElementById('addFirstChapterBtn')?.addEventListener('click', openAddModal);
+    // Add Chapter and Sub-Chapter buttons
+    document.getElementById('addChapterBtn').addEventListener('click', () => openAddModal('chapter'));
+    document.getElementById('addSubChapterBtn').addEventListener('click', () => openAddModal('subchapter'));
+    document.getElementById('addFirstChapterBtn')?.addEventListener('click', () => openAddModal('chapter'));
     
     // Edit Chapter buttons
     document.querySelectorAll('.edit-chapter-btn').forEach(btn => {
@@ -540,15 +557,54 @@ document.addEventListener('DOMContentLoaded', function() {
     // Refresh button
     document.getElementById('refreshBtn').addEventListener('click', () => location.reload());
     
-    function openAddModal() {
+    function openAddModal(type = 'chapter') {
         isEditMode = false;
-        document.getElementById('modalTitle').textContent = 'Add Chapter';
-        document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save mr-2"></i>Save Chapter';
         chapterForm.reset();
         document.getElementById('chapterId').value = '';
+        document.getElementById('formType').value = type;
         thumbnailPreview.classList.add('hidden');
         document.getElementById('removeThumbnailFlag').value = '0';
+        
+        if (type === 'subchapter') {
+            document.getElementById('modalTitle').textContent = 'Add Sub-Chapter';
+            document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save mr-2"></i>Save Sub-Chapter';
+            document.getElementById('chapterNameLabel').textContent = 'Sub-Chapter Name';
+            document.getElementById('chapterName').placeholder = 'Enter sub-chapter name';
+            document.getElementById('parentChapterSection').classList.remove('hidden');
+            document.getElementById('parentChapter').required = true;
+            loadParentChapters();
+        } else {
+            document.getElementById('modalTitle').textContent = 'Add Chapter';
+            document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save mr-2"></i>Save Chapter';
+            document.getElementById('chapterNameLabel').textContent = 'Chapter Name';
+            document.getElementById('chapterName').placeholder = 'Enter chapter name';
+            document.getElementById('parentChapterSection').classList.add('hidden');
+            document.getElementById('parentChapter').required = false;
+        }
+        
         chapterModal.classList.remove('hidden');
+    }
+    
+    function loadParentChapters() {
+        // Load only main chapters (those without parent_id) for the dropdown
+        fetch('/admin/notes-chapters/get-main-chapters')
+            .then(response => response.json())
+            .then(data => {
+                const parentSelect = document.getElementById('parentChapter');
+                parentSelect.innerHTML = '<option value="">Select Parent Chapter</option>';
+                
+                if (data.success && data.chapters) {
+                    data.chapters.forEach(chapter => {
+                        const option = document.createElement('option');
+                        option.value = chapter.id;
+                        option.textContent = chapter.chapter_name;
+                        parentSelect.appendChild(option);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error loading parent chapters:', error);
+            });
     }
     
     function openEditModal(chapterId) {
@@ -580,6 +636,18 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('description').value = chapter.description || '';
         document.getElementById('displayOrder').value = chapter.display_order;
         document.getElementById('status').value = chapter.status;
+        
+        // Handle parent chapter selection
+        if (chapter.parent_id) {
+            // If this is a sub-chapter, show the parent selection section and set the value
+            document.getElementById('parentSelection').classList.remove('hidden');
+            document.getElementById('parentChapter').value = chapter.parent_id;
+            document.getElementById('formType').value = 'subchapter';
+        } else {
+            // If this is a main chapter, hide the parent selection section
+            document.getElementById('parentSelection').classList.add('hidden');
+            document.getElementById('formType').value = 'chapter';
+        }
         
         // Handle thumbnail preview
         if (chapter.thumbnail_image) {

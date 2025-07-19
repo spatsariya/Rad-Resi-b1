@@ -118,6 +118,7 @@ class Router {
         // Notes Chapters Management
         $this->get('/admin/notes-chapters', 'NotesChapterController@index', ['auth']);
         $this->get('/admin/notes-chapters/get-details', 'NotesChapterController@getChapterDetails', ['auth']);
+        $this->get('/admin/notes-chapters/get-main-chapters', 'NotesChapterController@getMainChapters', ['auth']);
         $this->post('/admin/notes-chapters/create', 'NotesChapterController@create', ['auth']);
         $this->post('/admin/notes-chapters/update', 'NotesChapterController@update', ['auth']);
         $this->post('/admin/notes-chapters/delete', 'NotesChapterController@delete', ['auth']);

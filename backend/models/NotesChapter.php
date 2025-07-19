@@ -50,6 +50,7 @@ class NotesChapter
                     id,
                     chapter_name,
                     sub_chapter_name,
+                    parent_id,
                     description,
                     thumbnail_image,
                     display_order,
@@ -156,6 +157,7 @@ class NotesChapter
                 INSERT INTO notes_chapters (
                     chapter_name, 
                     sub_chapter_name, 
+                    parent_id,
                     description, 
                     thumbnail_image, 
                     display_order, 
@@ -165,6 +167,7 @@ class NotesChapter
                 ) VALUES (
                     :chapter_name, 
                     :sub_chapter_name, 
+                    :parent_id,
                     :description, 
                     :thumbnail_image, 
                     :display_order, 
@@ -177,6 +180,7 @@ class NotesChapter
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':chapter_name', $data['chapter_name']);
             $stmt->bindValue(':sub_chapter_name', $data['sub_chapter_name'] ?? '');
+            $stmt->bindValue(':parent_id', $data['parent_id'] ?? null);
             $stmt->bindValue(':description', $data['description'] ?? '');
             $stmt->bindValue(':thumbnail_image', $data['thumbnail_image'] ?? '');
             $stmt->bindValue(':display_order', $displayOrder, PDO::PARAM_INT);
@@ -200,6 +204,7 @@ class NotesChapter
                 UPDATE notes_chapters SET 
                     chapter_name = :chapter_name,
                     sub_chapter_name = :sub_chapter_name,
+                    parent_id = :parent_id,
                     description = :description,
                     thumbnail_image = :thumbnail_image,
                     display_order = :display_order,
@@ -212,6 +217,7 @@ class NotesChapter
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
             $stmt->bindValue(':chapter_name', $data['chapter_name']);
             $stmt->bindValue(':sub_chapter_name', $data['sub_chapter_name'] ?? '');
+            $stmt->bindValue(':parent_id', $data['parent_id'] ?? null);
             $stmt->bindValue(':description', $data['description'] ?? '');
             $stmt->bindValue(':thumbnail_image', $data['thumbnail_image'] ?? '');
             $stmt->bindValue(':display_order', $data['display_order'], PDO::PARAM_INT);
@@ -420,6 +426,31 @@ class NotesChapter
         } catch (Exception $e) {
             error_log("Delete thumbnail error: " . $e->getMessage());
             return false;
+        }
+    }
+    
+    /**
+     * Get main chapters (chapters without parent_id) for dropdown selection
+     */
+    public function getMainChapters()
+    {
+        try {
+            $sql = "
+                SELECT 
+                    id,
+                    chapter_name,
+                    display_order
+                FROM notes_chapters 
+                WHERE (parent_id IS NULL OR parent_id = 0) 
+                AND status = 'active'
+                ORDER BY display_order ASC, chapter_name ASC
+            ";
+            
+            return $this->db->query($sql);
+            
+        } catch (Exception $e) {
+            error_log("Get main chapters error: " . $e->getMessage());
+            throw new Exception("Error getting main chapters: " . $e->getMessage());
         }
     }
 }
