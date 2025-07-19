@@ -15,7 +15,7 @@ class Notes
     public function checkTable()
     {
         try {
-            $result = $this->db->query("SHOW TABLES LIKE 'notes'");
+            $result = $this->db->fetchAll("SHOW TABLES LIKE 'notes'");
             return !empty($result);
         } catch (Exception $e) {
             return false;
