@@ -66,7 +66,7 @@ class Notes
                     n.is_premium,
                     n.display_order,
                     n.status,
-                    n.views_count,
+                    n.view_count,
                     n.created_at,
                     n.updated_at,
                     nc.chapter_name,
@@ -205,7 +205,7 @@ class Notes
                     is_premium, 
                     display_order, 
                     status,
-                    views_count,
+                    view_count,
                     created_at,
                     updated_at
                 ) VALUES (
@@ -430,7 +430,7 @@ class Notes
     public function incrementViews($id)
     {
         try {
-            $sql = "UPDATE notes SET views_count = views_count + 1, updated_at = NOW() WHERE id = :id";
+            $sql = "UPDATE notes SET view_count = view_count + 1, updated_at = NOW() WHERE id = :id";
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
             
@@ -487,7 +487,7 @@ class Notes
                 FROM notes n
                 LEFT JOIN notes_chapters nc ON n.chapter_id = nc.id
                 WHERE n.status = 'active'
-                ORDER BY n.views_count DESC, n.created_at DESC
+                ORDER BY n.view_count DESC, n.created_at DESC
                 LIMIT :limit
             ";
             
