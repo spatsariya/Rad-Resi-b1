@@ -10,8 +10,14 @@ $currentPath = $_SERVER['REQUEST_URI'];
 	<title><?php echo $title ?? 'Radiology Resident'; ?></title>
 	<meta name="description" content="<?php echo $description ?? 'Advanced radiology education platform'; ?>">
 	
+	<!-- Favicon -->
+	<link rel="icon" type="image/svg+xml" href="/backend/assets/svg/light-icon.svg">
+	<link rel="alternate icon" href="/backend/assets/svg/light-icon.svg">
+	
 	<!-- Tailwind CSS -->
 	<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+	<!-- Custom Logo Styles -->
+	<link rel="stylesheet" href="/backend/assets/css/logo-styles.css">
 	<!-- Alpine JS -->
 	<script type="module" src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"></script>
 	<script nomodule src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine-ie11.min.js" defer></script>
@@ -70,13 +76,9 @@ $currentPath = $_SERVER['REQUEST_URI'];
         <div class="flex flex-col max-w-screen-xl px-8 mx-auto md:items-center md:justify-between md:flex-row">
             <div class="flex flex-row items-center justify-between py-6">
                 <div class="relative md:mt-8">
-                    <a href="/" class="text-lg relative z-50 font-bold tracking-widest text-gray-900 rounded-lg focus:outline-none focus:shadow-outline">
-						<i class="fas fa-stethoscope text-blue-500 mr-2"></i>
-						Radiology Resident
+                    <a href="/" class="relative z-50 rounded-lg focus:outline-none focus:shadow-outline">
+						<img src="/backend/assets/svg/logo.svg" alt="Radiology Resident" class="logo-main">
 					</a>
-                    <svg class="h-11 z-40 absolute -top-2 -left-3" viewBox="0 0 79 79" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M35.2574 2.24264C37.6005 -0.100501 41.3995 -0.100505 43.7426 2.24264L76.7574 35.2574C79.1005 37.6005 79.1005 41.3995 76.7574 43.7426L43.7426 76.7574C41.3995 79.1005 37.6005 79.1005 35.2574 76.7574L2.24264 43.7426C-0.100501 41.3995 -0.100505 37.6005 2.24264 35.2574L35.2574 2.24264Z" fill="#65DAFF"/>
-                    </svg>
                 </div>
                 <button class="rounded-lg md:hidden focus:outline-none focus:shadow-outline" @click="open = !open">
                     <svg fill="currentColor" viewBox="0 0 20 20" class="w-6 h-6">
@@ -204,8 +206,7 @@ $currentPath = $_SERVER['REQUEST_URI'];
 			<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
 				<div class="col-span-1 md:col-span-2">
 					<div class="flex items-center mb-4">
-						<i class="fas fa-stethoscope text-blue-400 text-xl mr-2"></i>
-						<span class="text-xl font-bold">Radiology Resident</span>
+						<img src="/backend/assets/svg/logo-dark-bg.svg" alt="Radiology Resident" class="logo-footer">
 					</div>
 					<p class="text-gray-400 max-w-md">
 						Advanced radiology education platform designed for medical students and residents.

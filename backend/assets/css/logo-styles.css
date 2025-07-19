@@ -1,0 +1,92 @@
+/* Custom Logo Styles for Radiology Resident Platform */
+
+/* Logo sizing and responsiveness */
+.logo-main {
+    height: 3rem; /* 48px */
+    width: auto;
+    max-width: 200px;
+    transition: all 0.3s ease;
+}
+
+.logo-admin {
+    height: 2rem; /* 32px */
+    width: auto;
+    max-width: 180px;
+    transition: all 0.3s ease;
+}
+
+.logo-footer {
+    height: 2rem; /* 32px */
+    width: auto;
+    max-width: 160px;
+}
+
+.logo-login {
+    height: 4rem; /* 64px */
+    width: auto;
+    max-width: 240px;
+}
+
+/* Icon sizing */
+.icon-favicon {
+    width: 32px;
+    height: 32px;
+}
+
+/* Hover effects */
+.logo-main:hover,
+.logo-admin:hover {
+    transform: scale(1.05);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .logo-main {
+        height: 2.5rem; /* 40px */
+    }
+    
+    .logo-login {
+        height: 3rem; /* 48px */
+    }
+}
+
+/* Dark theme compatibility */
+.dark .logo-light {
+    filter: brightness(0.9);
+}
+
+/* Loading states */
+.logo-loading {
+    opacity: 0.6;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .logo-main,
+    .logo-admin,
+    .logo-footer,
+    .logo-login {
+        filter: contrast(1.2);
+    }
+}
+
+/* Print styles */
+@media print {
+    .logo-main,
+    .logo-admin,
+    .logo-footer,
+    .logo-login {
+        height: 1.5rem;
+        filter: grayscale(1);
+    }
+}

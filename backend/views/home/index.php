@@ -6,8 +6,14 @@
 	<title><?php echo $title ?? 'Radiology Resident - Master Radiology with Expert-Led Courses'; ?></title>
 	<meta name="description" content="<?php echo $description ?? 'Advanced radiology education platform with comprehensive courses designed by leading radiologists'; ?>">
 	
+	<!-- Favicon -->
+	<link rel="icon" type="image/svg+xml" href="/backend/assets/svg/light-icon.svg">
+	<link rel="alternate icon" href="/backend/assets/svg/light-icon.svg">
+	
 	<!-- Tailwind CSS -->
 	<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+	<!-- Custom Logo Styles -->
+	<link rel="stylesheet" href="/backend/assets/css/logo-styles.css">
 	<!-- Alpine JS -->
 	<script type="module" src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"></script>
 	<script nomodule src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine-ie11.min.js" defer></script>
@@ -88,13 +94,9 @@
         <div class="flex flex-col max-w-screen-xl px-8 mx-auto md:items-center md:justify-between md:flex-row">
             <div class="flex flex-row items-center justify-between py-6">
                 <div class="relative md:mt-8">
-                    <a href="/" class="text-lg relative z-50 font-bold tracking-widest text-gray-900 rounded-lg focus:outline-none focus:shadow-outline">
-						<i class="fas fa-stethoscope text-blue-500 mr-2"></i>
-						Radiology Resident
+                    <a href="/" class="relative z-50 rounded-lg focus:outline-none focus:shadow-outline">
+						<img src="/backend/assets/svg/logo.svg" alt="Radiology Resident" class="logo-main">
 					</a>
-                    <svg class="h-11 z-40 absolute -top-2 -left-3" viewBox="0 0 79 79" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M35.2574 2.24264C37.6005 -0.100501 41.3995 -0.100505 43.7426 2.24264L76.7574 35.2574C79.1005 37.6005 79.1005 41.3995 76.7574 43.7426L43.7426 76.7574C41.3995 79.1005 37.6005 79.1005 35.2574 76.7574L2.24264 43.7426C-0.100501 41.3995 -0.100505 37.6005 2.24264 35.2574L35.2574 2.24264Z" fill="#65DAFF"/>
-                    </svg>
                 </div>
                 <button class="rounded-lg md:hidden focus:outline-none focus:shadow-outline" @click="open = !open">
                     <svg fill="currentColor" viewBox="0 0 20 20" class="w-6 h-6">
@@ -181,11 +183,9 @@
 			</div>
 			<!--Right Col-->
 			<div class="w-full lg:w-6/12 lg:-mt-10 relative" id="hero-image">
-				<!-- Medical professional with stethoscope -->
+				<!-- Banner Image -->
 				<div data-aos="fade-up" data-aos-once="true" class="w-10/12 mx-auto 2xl:-mb-20 relative">
-					<div class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-full w-80 h-80 mx-auto flex items-center justify-center">
-						<i class="fas fa-user-md text-white text-8xl"></i>
-					</div>
+					<img src="/backend/assets/svg/Banner.svg" alt="Radiology Education Banner" class="w-full h-auto">
 				</div>
 				<!-- floating elements -->
 				<div data-aos="fade-up" data-aos-delay="300" data-aos-once="true" class="absolute top-20 -left-6 sm:top-32 sm:left-10 md:top-40 md:left-16 lg:-left-0 lg:top-52 floating-4">
@@ -452,13 +452,7 @@
 		<div class="max-w-lg mx-auto">
 			<div class="flex py-12 justify-center text-white items-center px-20 sm:px-36">
 				<div class="relative">
-					<h1 class="font-bold text-xl pr-5 relative z-50">
-						<i class="fas fa-stethoscope mr-2"></i>
-						Radiology Resident
-					</h1>
-					<svg class="w-11 h-11 absolute -top-2 -left-3 z-40" viewBox="0 0 79 79" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<path d="M35.9645 2.94975C37.9171 0.997129 41.0829 0.997127 43.0355 2.94975L76.0502 35.9645C78.0029 37.9171 78.0029 41.0829 76.0503 43.0355L43.0355 76.0502C41.0829 78.0029 37.9171 78.0029 35.9645 76.0503L2.94975 43.0355C0.997129 41.0829 0.997127 37.9171 2.94975 35.9645L35.9645 2.94975Z" stroke="#26C1F2" stroke-width="2"/>
-					</svg>
+					<img src="/backend/assets/svg/logo-dark-bg.svg" alt="Radiology Resident" class="logo-footer">
 				</div>
 				<span class="border-l border-gray-500 text-sm pl-5 py-2 font-semibold">Medical Education Platform</span>
 			</div>

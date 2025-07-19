@@ -7,11 +7,24 @@ $currentPath = $_SERVER['REQUEST_URI'];
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title><?php echo $title ?? 'Admin Panel - Radiology Resident'; ?></title>
+	<meta name="description" content="<?php echo $description ?? 'Admin panel for managing platform content and settings'; ?>">
+	
+	<!-- Favicon -->
+	<link rel="icon" type="image/svg+xml" href="/backend/assets/svg/dark-icon.svg">
+	<link rel="alternate icon" href="/backend/assets/svg/dark-icon.svg">
+	
+	<!-- Tailwind CSS -->
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title><?php echo $title ?? 'Admin - Radiology Resident'; ?></title>
 	<meta name="description" content="<?php echo $description ?? 'Admin panel for managing content'; ?>">
 	
 	<!-- Tailwind CSS -->
 	<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+	<!-- Custom Logo Styles -->
+	<link rel="stylesheet" href="/backend/assets/css/logo-styles.css">
 	<!-- Font Awesome -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 	<!-- Inter font (TailAdmin style) -->
@@ -50,8 +63,7 @@ $currentPath = $_SERVER['REQUEST_URI'];
 		<div id="sidebar" class="sidebar-transition bg-gray-900 text-white w-72 min-h-screen p-4 overflow-y-auto">
 			<div class="flex items-center justify-between mb-6">
 				<div class="flex items-center">
-					<i class="fas fa-stethoscope text-blue-400 text-xl mr-2"></i>
-					<h1 class="text-lg font-semibold">Radiology Resident</h1>
+					<img src="/backend/assets/svg/logo-dark-bg.svg" alt="Radiology Resident" class="logo-admin">
 				</div>
 				<button id="sidebarToggle" class="lg:hidden text-gray-400 hover:text-white">
 					<i class="fas fa-times text-xl"></i>
