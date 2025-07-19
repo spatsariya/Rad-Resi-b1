@@ -191,4 +191,152 @@ class User
             return false;
         }
     }
+    
+    /**
+     * Get user by ID (alias for findById for consistency)
+     */
+    public function getUserById($id)
+    {
+        return $this->findById($id);
+    }
+    
+    /**
+     * Get contacts with advanced filtering for contact management
+     */
+    public function getContactsWithFilters($filters = [])
+    {
+        try {
+            $whereClauses = [];
+            $params = [];
+            
+            // Search filter
+            if (!empty($filters['search'])) {
+                $whereClauses[] = "(first_name LIKE :search OR last_name LIKE :search OR email LIKE :search OR phone LIKE :search OR institution LIKE :search OR specialization LIKE :search)";
+                $params['search'] = '%' . $filters['search'] . '%';
+            }
+            
+            // Role filter
+            if (!empty($filters['role'])) {
+                $whereClauses[] = "role = :role";
+                $params['role'] = $filters['role'];
+            }
+            
+            // Status filter
+            if (!empty($filters['status'])) {
+                $whereClauses[] = "status = :status";
+                $params['status'] = $filters['status'];
+            }
+            
+            // Newsletter filter
+            if (isset($filters['newsletter']) && $filters['newsletter'] !== '') {
+                $whereClauses[] = "newsletter = :newsletter";
+                $params['newsletter'] = (int)$filters['newsletter'];
+            }
+            
+            // Group filter (if implementing contact groups)
+            if (!empty($filters['group_id'])) {
+                $whereClauses[] = "id IN (SELECT user_id FROM contact_group_members WHERE group_id = :group_id)";
+                $params['group_id'] = $filters['group_id'];
+            }
+            
+            $whereClause = !empty($whereClauses) ? 'WHERE ' . implode(' AND ', $whereClauses) : '';
+            
+            // Count total for pagination
+            $countSql = "SELECT COUNT(*) as total FROM users $whereClause";
+            $countStmt = $this->db->prepare($countSql);
+            $countStmt->execute($params);
+            $total = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
+            
+            // Get contacts with message counts
+            $page = $filters['page'] ?? 1;
+            $per_page = $filters['per_page'] ?? 20;
+            $offset = ($page - 1) * $per_page;
+            
+            $sql = "
+                SELECT u.*, 
+                       COUNT(DISTINCT m_received.id) as messages_received,
+                       COUNT(DISTINCT ci.id) as interactions_count
+                FROM users u
+                LEFT JOIN messages m_received ON u.id = m_received.recipient_id
+                LEFT JOIN contact_interactions ci ON u.id = ci.user_id
+                $whereClause
+                GROUP BY u.id
+                ORDER BY u.created_at DESC
+                LIMIT :limit OFFSET :offset
+            ";
+            
+            $stmt = $this->db->prepare($sql);
+            
+            foreach ($params as $key => $value) {
+                $stmt->bindValue(":$key", $value);
+            }
+            $stmt->bindValue(':limit', $per_page, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            
+            $stmt->execute();
+            $contacts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            return [
+                'contacts' => $contacts,
+                'total' => $total
+            ];
+            
+        } catch (PDOException $e) {
+            error_log("Get contacts with filters error: " . $e->getMessage());
+            return [
+                'contacts' => [],
+                'total' => 0
+            ];
+        }
+    }
+    
+    /**
+     * Update user's last login time
+     */
+    public function updateLastLogin($id)
+    {
+        try {
+            $stmt = $this->db->prepare("UPDATE users SET last_login = NOW() WHERE id = :id");
+            return $stmt->execute(['id' => $id]);
+            
+        } catch (PDOException $e) {
+            error_log("Update last login error: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Get user statistics for dashboard
+     */
+    public function getUserStats()
+    {
+        try {
+            $stats = [];
+            
+            // Total users
+            $stmt = $this->db->query("SELECT COUNT(*) as total FROM users");
+            $stats['total_users'] = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+            
+            // Active users
+            $stmt = $this->db->query("SELECT COUNT(*) as active FROM users WHERE status = 'active'");
+            $stats['active_users'] = $stmt->fetch(PDO::FETCH_ASSOC)['active'];
+            
+            // New users this month
+            $stmt = $this->db->query("SELECT COUNT(*) as new_month FROM users WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())");
+            $stats['new_users_month'] = $stmt->fetch(PDO::FETCH_ASSOC)['new_month'];
+            
+            // Users by role
+            $stmt = $this->db->query("SELECT role, COUNT(*) as count FROM users GROUP BY role");
+            $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($roles as $role) {
+                $stats['role_' . $role['role']] = $role['count'];
+            }
+            
+            return $stats;
+            
+        } catch (PDOException $e) {
+            error_log("Get user stats error: " . $e->getMessage());
+            return [];
+        }
+    }
 }
