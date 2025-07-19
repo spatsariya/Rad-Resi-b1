@@ -127,6 +127,7 @@ class Router {
         // Notes Management
         $this->get('/admin/notes', 'NotesController@index', ['auth']);
         $this->get('/admin/notes/get-note-details', 'NotesController@getNoteDetails', ['auth']);
+        $this->get('/admin/notes/get/(\d+)', 'NotesController@get', ['auth']); // RESTful get note by ID
         $this->post('/admin/notes/create', 'NotesController@create', ['auth']);
         $this->post('/admin/notes/update', 'NotesController@update', ['auth']);
         $this->post('/admin/notes/delete', 'NotesController@delete', ['auth']);

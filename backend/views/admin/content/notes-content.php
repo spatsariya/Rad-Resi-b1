@@ -121,7 +121,7 @@ if (isset($table_missing) && $table_missing): ?>
         <!-- Header with Add Button -->
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Notes Management</h3>
-            <button onclick="openCreateModal()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <button onclick="openAddModal()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
@@ -199,7 +199,7 @@ if (isset($table_missing) && $table_missing): ?>
             <h3 class="mt-2 text-sm font-medium text-gray-900">No notes found</h3>
             <p class="mt-1 text-sm text-gray-500">Get started by creating a new note.</p>
             <div class="mt-6">
-                <button onclick="openCreateModal()" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <button onclick="openAddModal()" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
@@ -251,6 +251,15 @@ if (isset($table_missing) && $table_missing): ?>
                                             </svg>
                                             <?php echo number_format($note['view_count']); ?> views
                                         </span>
+                                        
+                                        <?php if (!empty($note['pdf_file'])): ?>
+                                        <span class="flex items-center text-red-600">
+                                            <svg class="flex-shrink-0 mr-1.5 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            PDF attached
+                                        </span>
+                                        <?php endif; ?>
                                         
                                         <span class="flex items-center">
                                             <svg class="flex-shrink-0 mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -384,10 +393,10 @@ if (isset($table_missing) && $table_missing): ?>
                 </button>
             </div>
             
-            <form id="noteForm" onsubmit="saveNote(event)">
+            <form id="noteForm" onsubmit="saveNote(event)" enctype="multipart/form-data">
                 <input type="hidden" id="noteId" name="note_id">
                 
-                <div class="grid grid-cols-1 gap-4">
+                <div class="grid grid-cols-1 gap-6">
                     <div>
                         <label for="title" class="block text-sm font-medium text-gray-700">Title *</label>
                         <input type="text" id="title" name="title" required 
@@ -396,48 +405,74 @@ if (isset($table_missing) && $table_missing): ?>
                     
                     <div>
                         <label for="content" class="block text-sm font-medium text-gray-700">Content</label>
-                        <textarea id="content" name="content" rows="10" 
-                                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                  placeholder="Enter note content..."></textarea>
+                        <div id="editor-container" class="mt-1">
+                            <div id="quill-editor" style="height: 300px;"></div>
+                            <textarea id="content" name="content" style="display: none;"></textarea>
+                        </div>
+                        <p class="mt-1 text-xs text-gray-500">Use the rich text editor to format your content. You can add headings, lists, links, and more.</p>
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label for="chapter_id" class="block text-sm font-medium text-gray-700">Chapter</label>
+                            <label for="chapter_id" class="block text-sm font-medium text-gray-700">Chapter & Sub-Chapter</label>
                             <select id="chapter_id" name="chapter_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                 <option value="">Select Chapter (Optional)</option>
                                 <?php foreach ($chapters as $chapter): ?>
                                     <option value="<?php echo $chapter['id']; ?>">
                                         <?php echo htmlspecialchars($chapter['chapter_name']); ?>
                                         <?php if ($chapter['sub_chapter']): ?>
-                                            - <?php echo htmlspecialchars($chapter['sub_chapter']); ?>
+                                            → <?php echo htmlspecialchars($chapter['sub_chapter']); ?>
                                         <?php endif; ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
+                            <p class="mt-1 text-xs text-gray-500">Choose the relevant chapter and sub-chapter for organization</p>
                         </div>
                         
+                        <div>
+                            <label for="pdf_file" class="block text-sm font-medium text-gray-700">PDF Attachment</label>
+                            <div class="mt-1">
+                                <input type="file" id="pdf_file" name="pdf_file" accept=".pdf" 
+                                       class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                <div id="current-pdf" class="mt-2 hidden">
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <svg class="h-4 w-4 mr-2 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span id="current-pdf-name"></span>
+                                        <button type="button" onclick="removePdf()" class="ml-2 text-red-500 hover:text-red-700">
+                                            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="mt-1 text-xs text-gray-500">Upload a PDF file (max 10MB) related to this note</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <label for="display_order" class="block text-sm font-medium text-gray-700">Display Order</label>
                             <input type="number" id="display_order" name="display_order" min="0" value="0"
                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                            <p class="mt-1 text-xs text-gray-500">Lower numbers appear first</p>
                         </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
                         <div>
-                            <label for="is_premium" class="block text-sm font-medium text-gray-700">Type</label>
+                            <label for="is_premium" class="block text-sm font-medium text-gray-700">Access Type</label>
                             <select id="is_premium" name="is_premium" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                <option value="0">Free</option>
-                                <option value="1">Premium</option>
+                                <option value="0">🆓 Free</option>
+                                <option value="1">💎 Premium</option>
                             </select>
                         </div>
                         
                         <div>
                             <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
                             <select id="status" name="status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
+                                <option value="active">✅ Active</option>
+                                <option value="inactive">⏸️ Inactive</option>
                             </select>
                         </div>
                     </div>
@@ -448,7 +483,14 @@ if (isset($table_missing) && $table_missing): ?>
                         Cancel
                     </button>
                     <button type="submit" id="saveBtn" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Save Note
+                        <span class="loading-text">Save Note</span>
+                        <span class="loading-spinner hidden">
+                            <svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Saving...
+                        </span>
                     </button>
                 </div>
             </form>
@@ -479,79 +521,6 @@ if (isset($table_missing) && $table_missing): ?>
 <script>
 // Global variables
 let currentEditId = null;
-
-// Open create modal
-function openCreateModal() {
-    currentEditId = null;
-    document.getElementById('modalTitle').textContent = 'Create New Note';
-    document.getElementById('noteForm').reset();
-    document.getElementById('noteId').value = '';
-    document.getElementById('saveBtn').textContent = 'Save Note';
-    document.getElementById('noteModal').classList.remove('hidden');
-}
-
-// Edit note
-function editNote(noteId) {
-    currentEditId = noteId;
-    document.getElementById('modalTitle').textContent = 'Edit Note';
-    document.getElementById('saveBtn').textContent = 'Update Note';
-    
-    // Fetch note details
-    fetch(`/admin/notes/get-note-details?note_id=${noteId}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                const note = data.note;
-                document.getElementById('noteId').value = note.id;
-                document.getElementById('title').value = note.title;
-                document.getElementById('content').value = note.content || '';
-                document.getElementById('chapter_id').value = note.chapter_id || '';
-                document.getElementById('is_premium').value = note.is_premium;
-                document.getElementById('display_order').value = note.display_order;
-                document.getElementById('status').value = note.status;
-                document.getElementById('noteModal').classList.remove('hidden');
-            } else {
-                alert('Error loading note details: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error loading note details');
-        });
-}
-
-// Save note
-function saveNote(event) {
-    event.preventDefault();
-    
-    const formData = new FormData(document.getElementById('noteForm'));
-    const url = currentEditId ? '/admin/notes/update' : '/admin/notes/create';
-    
-    document.getElementById('saveBtn').disabled = true;
-    document.getElementById('saveBtn').textContent = 'Saving...';
-    
-    fetch(url, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            closeModal();
-            location.reload();
-        } else {
-            alert('Error: ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error saving note');
-    })
-    .finally(() => {
-        document.getElementById('saveBtn').disabled = false;
-        document.getElementById('saveBtn').textContent = currentEditId ? 'Update Note' : 'Save Note';
-    });
-}
 
 // View note details
 function viewNoteDetails(noteId) {
@@ -588,6 +557,25 @@ function viewNoteDetails(noteId) {
                             <span class="font-medium">Updated:</span> ${new Date(note.updated_at).toLocaleDateString()}
                         </div>
                     </div>
+                    
+                    ${note.pdf_file ? `
+                        <div class="mt-4">
+                            <h5 class="font-medium text-gray-900 mb-2">PDF Attachment:</h5>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="flex items-center">
+                                    <svg class="h-6 w-6 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-900">${note.pdf_file.split('/').pop()}</p>
+                                        <a href="/${note.pdf_file}" target="_blank" class="text-blue-600 hover:text-blue-800 text-sm">
+                                            View PDF →
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
                     
                     ${note.content ? `
                         <div class="mt-4">
@@ -702,5 +690,138 @@ window.onclick = function(event) {
     if (event.target === viewModal) {
         closeViewModal();
     }
+}
+</script>
+
+<!-- Quill Rich Text Editor -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+<script>
+// Initialize Quill editor
+let quill;
+document.addEventListener('DOMContentLoaded', function() {
+    quill = new Quill('#quill-editor', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ 'header': [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'indent': '-1'}, { 'indent': '+1' }],
+                ['link', 'image'],
+                [{ 'align': [] }],
+                ['clean']
+            ]
+        },
+        placeholder: 'Enter your note content here...'
+    });
+    
+    // Update hidden textarea when content changes
+    quill.on('text-change', function() {
+        document.getElementById('content').value = quill.root.innerHTML;
+    });
+});
+
+// PDF file management
+function removePdf() {
+    document.getElementById('pdf_file').value = '';
+    document.getElementById('current-pdf').classList.add('hidden');
+}
+
+// Enhanced form functions
+function openAddModal() {
+    currentEditId = null;
+    document.getElementById('modalTitle').textContent = 'Add New Note';
+    document.getElementById('noteForm').reset();
+    quill.setContents([]);
+    document.getElementById('current-pdf').classList.add('hidden');
+    document.getElementById('noteModal').classList.remove('hidden');
+}
+
+function editNote(noteId) {
+    currentEditId = noteId;
+    document.getElementById('modalTitle').textContent = 'Edit Note';
+    
+    // Fetch note data
+    fetch(`/admin/notes/get/${noteId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const note = data.note;
+                document.getElementById('noteId').value = note.id;
+                document.getElementById('title').value = note.title;
+                document.getElementById('chapter_id').value = note.chapter_id || '';
+                document.getElementById('is_premium').value = note.is_premium;
+                document.getElementById('display_order').value = note.display_order;
+                document.getElementById('status').value = note.status;
+                
+                // Set Quill content
+                if (note.content) {
+                    quill.root.innerHTML = note.content;
+                } else {
+                    quill.setContents([]);
+                }
+                
+                // Show current PDF if exists
+                if (note.pdf_file) {
+                    document.getElementById('current-pdf-name').textContent = note.pdf_file.split('/').pop();
+                    document.getElementById('current-pdf').classList.remove('hidden');
+                } else {
+                    document.getElementById('current-pdf').classList.add('hidden');
+                }
+                
+                document.getElementById('noteModal').classList.remove('hidden');
+            } else {
+                alert('Error loading note: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error loading note');
+        });
+}
+
+function saveNote(event) {
+    event.preventDefault();
+    
+    const saveBtn = document.getElementById('saveBtn');
+    const loadingText = saveBtn.querySelector('.loading-text');
+    const loadingSpinner = saveBtn.querySelector('.loading-spinner');
+    
+    // Show loading state
+    saveBtn.disabled = true;
+    loadingText.classList.add('hidden');
+    loadingSpinner.classList.remove('hidden');
+    
+    // Update content from Quill editor
+    document.getElementById('content').value = quill.root.innerHTML;
+    
+    const formData = new FormData(document.getElementById('noteForm'));
+    const url = currentEditId ? '/admin/notes/update' : '/admin/notes/create';
+    
+    fetch(url, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            closeModal();
+            location.reload();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error saving note');
+    })
+    .finally(() => {
+        // Reset loading state
+        saveBtn.disabled = false;
+        loadingText.classList.remove('hidden');
+        loadingSpinner.classList.add('hidden');
+    });
 }
 </script>

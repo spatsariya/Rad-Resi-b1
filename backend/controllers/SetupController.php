@@ -115,6 +115,7 @@ class SetupController extends BaseController
             `content` longtext,
             `chapter_id` int(11) DEFAULT NULL,
             `is_premium` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0=Free, 1=Premium',
+            `pdf_file` varchar(255) DEFAULT NULL COMMENT 'Path to uploaded PDF file',
             `view_count` int(11) NOT NULL DEFAULT 0,
             `display_order` int(11) NOT NULL DEFAULT 0,
             `status` enum('active','inactive') NOT NULL DEFAULT 'active',

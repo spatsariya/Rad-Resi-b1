@@ -147,11 +147,24 @@ class NotesController extends BaseController
                     return;
                 }
                 
+                // Handle PDF file upload
+                $pdf_file = null;
+                if (isset($_FILES['pdf_file']) && $_FILES['pdf_file']['error'] === UPLOAD_ERR_OK) {
+                    $upload_result = $this->handlePdfUpload($_FILES['pdf_file']);
+                    if ($upload_result['success']) {
+                        $pdf_file = $upload_result['filename'];
+                    } else {
+                        $this->jsonResponse(['success' => false, 'message' => $upload_result['message']]);
+                        return;
+                    }
+                }
+                
                 $data = [
                     'title' => $title,
                     'content' => trim($_POST['content'] ?? ''),
                     'chapter_id' => $_POST['chapter_id'] ?: null,
                     'is_premium' => intval($_POST['is_premium'] ?? 0),
+                    'pdf_file' => $pdf_file,
                     'display_order' => intval($_POST['display_order'] ?? 0),
                     'status' => $_POST['status'] ?? 'active'
                 ];
@@ -203,11 +216,28 @@ class NotesController extends BaseController
                     return;
                 }
                 
+                // Handle PDF file upload
+                $pdf_file = $existingNote['pdf_file'] ?? null; // Keep existing file if no new upload
+                if (isset($_FILES['pdf_file']) && $_FILES['pdf_file']['error'] === UPLOAD_ERR_OK) {
+                    $upload_result = $this->handlePdfUpload($_FILES['pdf_file']);
+                    if ($upload_result['success']) {
+                        // Delete old file if exists
+                        if ($pdf_file && file_exists(__DIR__ . '/../../' . $pdf_file)) {
+                            unlink(__DIR__ . '/../../' . $pdf_file);
+                        }
+                        $pdf_file = $upload_result['filename'];
+                    } else {
+                        $this->jsonResponse(['success' => false, 'message' => $upload_result['message']]);
+                        return;
+                    }
+                }
+                
                 $data = [
                     'title' => $title,
                     'content' => trim($_POST['content'] ?? ''),
                     'chapter_id' => $_POST['chapter_id'] ?: null,
                     'is_premium' => intval($_POST['is_premium'] ?? 0),
+                    'pdf_file' => $pdf_file,
                     'display_order' => intval($_POST['display_order'] ?? $existingNote['display_order']),
                     'status' => $_POST['status'] ?? $existingNote['status']
                 ];
@@ -369,6 +399,77 @@ class NotesController extends BaseController
         } catch (Exception $e) {
             error_log("Get chapters error: " . $e->getMessage());
             $this->jsonResponse(['success' => false, 'message' => 'Error loading chapters: ' . $e->getMessage()]);
+        }
+    }
+    
+    /**
+     * Get single note by ID (RESTful endpoint)
+     */
+    public function get($id = null)
+    {
+        if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_role'], ['admin', 'instructor'])) {
+            $this->jsonResponse(['success' => false, 'message' => 'Unauthorized']);
+            return;
+        }
+        
+        $note_id = intval($id ?? 0);
+        if (!$note_id) {
+            $this->jsonResponse(['success' => false, 'message' => 'Note ID required']);
+            return;
+        }
+        
+        try {
+            $note = $this->notesModel->findById($note_id);
+            if (!$note) {
+                $this->jsonResponse(['success' => false, 'message' => 'Note not found']);
+                return;
+            }
+            
+            $this->jsonResponse(['success' => true, 'note' => $note]);
+            
+        } catch (Exception $e) {
+            error_log("Get note error: " . $e->getMessage());
+            $this->jsonResponse(['success' => false, 'message' => 'Error loading note: ' . $e->getMessage()]);
+        }
+    }
+    
+    /**
+     * Handle PDF file upload
+     */
+    private function handlePdfUpload($file)
+    {
+        // Check file size (max 10MB)
+        $maxSize = 10 * 1024 * 1024; // 10MB
+        if ($file['size'] > $maxSize) {
+            return ['success' => false, 'message' => 'File size exceeds 10MB limit'];
+        }
+        
+        // Check file type
+        $allowedTypes = ['application/pdf'];
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $file['tmp_name']);
+        finfo_close($finfo);
+        
+        if (!in_array($mimeType, $allowedTypes)) {
+            return ['success' => false, 'message' => 'Only PDF files are allowed'];
+        }
+        
+        // Generate unique filename
+        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $filename = uniqid('note_', true) . '.' . $extension;
+        $uploadPath = __DIR__ . '/../../uploads/notes/' . $filename;
+        
+        // Create directory if it doesn't exist
+        $uploadDir = dirname($uploadPath);
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+        
+        // Move uploaded file
+        if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+            return ['success' => true, 'filename' => 'uploads/notes/' . $filename];
+        } else {
+            return ['success' => false, 'message' => 'Failed to upload file'];
         }
     }
 }

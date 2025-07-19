@@ -64,6 +64,7 @@ class Notes
                     n.content,
                     n.chapter_id,
                     n.is_premium,
+                    n.pdf_file,
                     n.display_order,
                     n.status,
                     n.view_count,
@@ -203,6 +204,7 @@ class Notes
                     content, 
                     chapter_id, 
                     is_premium, 
+                    pdf_file,
                     display_order, 
                     status,
                     view_count,
@@ -213,6 +215,7 @@ class Notes
                     :content, 
                     :chapter_id, 
                     :is_premium, 
+                    :pdf_file,
                     :display_order, 
                     :status,
                     0,
@@ -226,6 +229,7 @@ class Notes
             $stmt->bindValue(':content', $data['content'] ?? '');
             $stmt->bindValue(':chapter_id', $data['chapter_id'] ? intval($data['chapter_id']) : null, PDO::PARAM_INT);
             $stmt->bindValue(':is_premium', intval($data['is_premium'] ?? 0), PDO::PARAM_INT);
+            $stmt->bindValue(':pdf_file', $data['pdf_file'] ?? null);
             $stmt->bindValue(':display_order', $displayOrder, PDO::PARAM_INT);
             $stmt->bindValue(':status', $data['status'] ?? 'active');
             
@@ -249,6 +253,7 @@ class Notes
                     content = :content,
                     chapter_id = :chapter_id,
                     is_premium = :is_premium,
+                    pdf_file = :pdf_file,
                     display_order = :display_order,
                     status = :status,
                     updated_at = NOW()
@@ -261,6 +266,7 @@ class Notes
             $stmt->bindValue(':content', $data['content'] ?? '');
             $stmt->bindValue(':chapter_id', $data['chapter_id'] ? intval($data['chapter_id']) : null, PDO::PARAM_INT);
             $stmt->bindValue(':is_premium', intval($data['is_premium'] ?? 0), PDO::PARAM_INT);
+            $stmt->bindValue(':pdf_file', $data['pdf_file'] ?? null);
             $stmt->bindValue(':display_order', intval($data['display_order']), PDO::PARAM_INT);
             $stmt->bindValue(':status', $data['status']);
             
