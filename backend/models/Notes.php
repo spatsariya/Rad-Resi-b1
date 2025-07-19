@@ -378,7 +378,7 @@ class Notes
             $stats['free_notes'] = $result['count'] ?? 0;
             
             // Total views
-            $result = $this->db->fetch("SELECT SUM(views_count) as total FROM notes");
+            $result = $this->db->fetch("SELECT SUM(view_count) as total FROM notes");
             $stats['total_views'] = $result['total'] ?? 0;
             
             return $stats;
