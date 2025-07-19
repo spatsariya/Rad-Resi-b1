@@ -115,7 +115,15 @@ class Router {
         $this->get('/api/admin/contacts/history', 'ContactController@getHistory', ['auth']);
         
         // Theory Exams
-        $this->get('/admin/notes-chapters', 'AdminController@notesChapters', ['auth']);
+        // Notes Chapters Management
+        $this->get('/admin/notes-chapters', 'NotesChapterController@index', ['auth']);
+        $this->get('/admin/notes-chapters/get-details', 'NotesChapterController@getChapterDetails', ['auth']);
+        $this->post('/admin/notes-chapters/create', 'NotesChapterController@create', ['auth']);
+        $this->post('/admin/notes-chapters/update', 'NotesChapterController@update', ['auth']);
+        $this->post('/admin/notes-chapters/delete', 'NotesChapterController@delete', ['auth']);
+        $this->post('/admin/notes-chapters/update-status', 'NotesChapterController@updateStatus', ['auth']);
+        $this->post('/admin/notes-chapters/update-order', 'NotesChapterController@updateOrder', ['auth']);
+        
         $this->get('/admin/notes', 'AdminController@notes', ['auth']);
         $this->get('/admin/prev-year-questions', 'AdminController@prevYearQuestions', ['auth']);
         
