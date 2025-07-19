@@ -115,24 +115,13 @@ class AuthController extends BaseController
         }
         
         try {
-            // Log the start of registration process
-            error_log("Registration process started for email: " . ($_POST['email'] ?? 'unknown'));
-            
             // Validate CSRF token
             if (!$this->validateCSRF()) {
-                error_log("CSRF validation failed");
                 $this->jsonResponse([
-                    'error' => 'Invalid CSRF token. Please refresh the page and try again.',
-                    'debug' => [
-                        'session_id' => session_id(),
-                        'session_csrf' => $_SESSION['csrf_token'] ?? 'missing',
-                        'post_csrf' => $_POST['csrf_token'] ?? 'missing'
-                    ]
+                    'error' => 'Invalid CSRF token. Please refresh the page and try again.'
                 ], 403);
                 return;
             }
-            
-            error_log("CSRF validation passed");
             
             // Get and validate input
             $firstName = filter_input(INPUT_POST, 'first_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -145,8 +134,6 @@ class AuthController extends BaseController
             $experienceYears = filter_input(INPUT_POST, 'experience_years', FILTER_VALIDATE_INT);
             $institution = filter_input(INPUT_POST, 'institution', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
             $newsletter = filter_input(INPUT_POST, 'newsletter', FILTER_VALIDATE_BOOLEAN);
-            
-            error_log("Input validation completed");
             
             // Validate required fields
             $errors = [];
@@ -169,27 +156,18 @@ class AuthController extends BaseController
             }
             
             if (!empty($errors)) {
-                error_log("Validation errors: " . implode(', ', $errors));
                 $this->jsonResponse(['error' => implode('. ', $errors)], 400);
                 return;
             }
             
-            error_log("All validations passed, creating User model");
-            
             // Check if user already exists
             $user = new User();
-            error_log("User model created successfully");
-            
             $existingUser = $user->findByEmail($email);
-            error_log("Email check completed");
             
             if ($existingUser) {
-                error_log("User already exists with email: $email");
                 $this->jsonResponse(['error' => 'Email already registered'], 400);
                 return;
             }
-            
-            error_log("Preparing user data for creation");
             
             // Create new user
             $userData = [
@@ -208,18 +186,12 @@ class AuthController extends BaseController
                 'created_at' => date('Y-m-d H:i:s')
             ];
             
-            error_log("Creating user in database");
-            
             $userId = $user->create($userData);
             
             if ($userId) {
-                error_log("User created successfully with ID: $userId");
-                
                 // Start session for the new user
                 $newUser = $user->findById($userId);
                 $this->startSession($newUser);
-                
-                error_log("User session started, registration complete");
                 
                 $this->jsonResponse([
                     'success' => true,
@@ -227,7 +199,6 @@ class AuthController extends BaseController
                     'redirect' => '/dashboard'
                 ]);
             } else {
-                error_log("User creation failed - no ID returned");
                 $this->jsonResponse(['error' => 'Registration failed. Please try again.'], 500);
             }
             

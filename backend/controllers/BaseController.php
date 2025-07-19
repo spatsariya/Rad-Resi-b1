@@ -61,11 +61,6 @@ class BaseController {
         $token = $_POST['csrf_token'] ?? '';
         $sessionToken = $_SESSION['csrf_token'] ?? '';
         
-        // Debug logging (remove in production)
-        error_log("CSRF Debug - POST token: " . substr($token, 0, 10) . "...");
-        error_log("CSRF Debug - Session token: " . substr($sessionToken, 0, 10) . "...");
-        error_log("CSRF Debug - Session ID: " . session_id());
-        
         return !empty($token) && !empty($sessionToken) && hash_equals($sessionToken, $token);
     }
     

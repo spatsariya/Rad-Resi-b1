@@ -578,23 +578,13 @@
 					formData.set('csrf_token', csrfToken);
 				}
 				
-				// Debug logging
-				console.log('CSRF Token being sent:', csrfToken);
-				console.log('Form data entries:');
-				for (let [key, value] of formData.entries()) {
-					console.log(key, ':', key === 'csrf_token' ? value.substring(0, 10) + '...' : value);
-				}
-				
 				const response = await fetch('/auth/register', {
 					method: 'POST',
 					body: formData,
-					credentials: 'same-origin' // Important for session cookies
+					credentials: 'same-origin'
 				});
 				
 				const result = await response.json();
-				
-				// Debug logging
-				console.log('Server response:', result);
 				
 				if (result.success) {
 					showMessage(result.message, 'success');
@@ -603,9 +593,6 @@
 					}, 2000);
 				} else {
 					showMessage(result.error || 'Registration failed', 'error');
-					if (result.debug) {
-						console.log('Debug info:', result.debug);
-					}
 				}
 			} catch (error) {
 				showMessage('Network error. Please try again.', 'error');
