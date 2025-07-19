@@ -106,7 +106,13 @@ class Router {
         $this->post('/api/admin/users/delete', 'AdminController@deleteUser', ['auth']);
         $this->get('/api/admin/users/get', 'AdminController@getUserData', ['auth']);
         $this->post('/api/admin/users/update', 'AdminController@updateUser', ['auth']);
-        $this->get('/admin/contacts', 'AdminController@contacts', ['auth']);
+        
+        // Contact Management
+        $this->get('/admin/contacts', 'ContactController@index', ['auth']);
+        $this->get('/api/admin/contacts/user-info', 'ContactController@getUserInfo', ['auth']);
+        $this->post('/api/admin/contacts/send-message', 'ContactController@sendMessage', ['auth']);
+        $this->post('/api/admin/contacts/bulk-message', 'ContactController@sendBulkMessage', ['auth']);
+        $this->get('/api/admin/contacts/history', 'ContactController@getHistory', ['auth']);
         
         // Theory Exams
         $this->get('/admin/notes-chapters', 'AdminController@notesChapters', ['auth']);
