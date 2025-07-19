@@ -438,7 +438,8 @@ class NotesChapter
             error_log("NotesChapter::getMainChapters - Starting query");
             
             // First check if parent_id column exists
-            $columns = $this->db->query("SHOW COLUMNS FROM notes_chapters LIKE 'parent_id'");
+            $stmt = $this->db->query("SHOW COLUMNS FROM notes_chapters LIKE 'parent_id'");
+            $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
             error_log("Parent_id column check result: " . json_encode($columns));
             
             if (empty($columns)) {
@@ -469,8 +470,9 @@ class NotesChapter
             }
             
             error_log("Executing SQL: " . $sql);
-            $result = $this->db->query($sql);
-            error_log("Query result: " . json_encode($result));
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            error_log("Query result count: " . count($result));
             
             return $result;
             
@@ -490,8 +492,9 @@ class NotesChapter
                     WHERE status = 'active'
                     ORDER BY display_order ASC, chapter_name ASC
                 ";
-                $result = $this->db->query($sql);
-                error_log("Fallback query result: " . json_encode($result));
+                $stmt = $this->db->query($sql);
+                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                error_log("Fallback query result count: " . count($result));
                 return $result;
             } catch (Exception $e2) {
                 error_log("Fallback query also failed: " . $e2->getMessage());
