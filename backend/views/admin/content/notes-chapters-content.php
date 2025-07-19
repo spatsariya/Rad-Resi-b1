@@ -586,24 +586,34 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function loadParentChapters() {
+        console.log('Loading parent chapters...');
         // Load only main chapters (those without parent_id) for the dropdown
         fetch('/admin/notes-chapters/get-main-chapters')
-            .then(response => response.json())
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
             .then(data => {
+                console.log('API Response:', data);
                 const parentSelect = document.getElementById('parentChapter');
                 parentSelect.innerHTML = '<option value="">Select Parent Chapter</option>';
                 
                 if (data.success && data.chapters) {
+                    console.log('Found', data.chapters.length, 'chapters');
                     data.chapters.forEach(chapter => {
                         const option = document.createElement('option');
                         option.value = chapter.id;
                         option.textContent = chapter.chapter_name;
                         parentSelect.appendChild(option);
                     });
+                } else {
+                    console.error('API returned error:', data.message);
+                    alert('Error loading parent chapters: ' + (data.message || 'Unknown error'));
                 }
             })
             .catch(error => {
                 console.error('Error loading parent chapters:', error);
+                alert('Error loading parent chapters: ' + error.message);
             });
     }
     
