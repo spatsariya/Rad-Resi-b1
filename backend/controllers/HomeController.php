@@ -296,55 +296,82 @@ class HomeController extends BaseController {
      * Get subscription plans data
      */
     private function getSubscriptionPlans() {
-        // Mock data - replace with database queries
-        return [
-            [
-                'id' => 1,
-                'name' => 'Basic',
-                'price' => 29,
-                'period' => 'month',
-                'description' => 'Perfect for medical students starting their radiology journey',
-                'features' => [
-                    'Access to theory notes',
-                    'Basic video tutorials',
-                    'Practice questions',
-                    'Email support'
+        try {
+            // Use Plan model to get active plans
+            require_once __DIR__ . '/../models/Plan.php';
+            $planModel = new Plan();
+            $plans = $planModel->getActivePlans();
+            
+            // Convert to the format expected by the frontend
+            $formattedPlans = [];
+            foreach ($plans as $plan) {
+                $formattedPlans[] = [
+                    'id' => $plan['id'],
+                    'name' => $plan['name'],
+                    'price' => ($plan['price'] === 'Free' || $plan['price'] === '0') ? 0 : floatval($plan['price']),
+                    'period' => $plan['period'],
+                    'description' => $plan['description'],
+                    'features' => $plan['features'],
+                    'popular' => (bool)$plan['is_popular'],
+                    'icon' => $plan['icon'] ?? 'fas fa-star'
+                ];
+            }
+            
+            return $formattedPlans;
+            
+        } catch (Exception $e) {
+            error_log("Get subscription plans error: " . $e->getMessage());
+            
+            // Fallback to hardcoded data if database fails
+            return [
+                [
+                    'id' => 1,
+                    'name' => 'Basic',
+                    'price' => 29,
+                    'period' => 'month',
+                    'description' => 'Perfect for medical students starting their radiology journey',
+                    'features' => [
+                        'Access to theory notes',
+                        'Basic video tutorials',
+                        'Practice questions',
+                        'Email support'
+                    ],
+                    'popular' => false
                 ],
-                'popular' => false
-            ],
-            [
-                'id' => 2,
-                'name' => 'Professional',
-                'price' => 79,
-                'period' => 'month',
-                'description' => 'Ideal for residents and advanced students',
-                'features' => [
-                    'Everything in Basic',
-                    'OSCE practice sessions',
-                    'Advanced spotters',
-                    'Table viva preparation',
-                    'Priority support',
-                    'Downloadable resources'
+                [
+                    'id' => 2,
+                    'name' => 'Professional',
+                    'price' => 79,
+                    'period' => 'month',
+                    'description' => 'Ideal for residents and advanced students',
+                    'features' => [
+                        'Everything in Basic',
+                        'OSCE practice sessions',
+                        'Advanced spotters',
+                        'Table viva preparation',
+                        'Priority support',
+                        'Downloadable resources'
+                    ],
+                    'popular' => true
                 ],
-                'popular' => true
-            ],
-            [
-                'id' => 3,
-                'name' => 'Premium',
-                'price' => 149,
-                'period' => 'month',
-                'description' => 'Complete access for serious professionals',
-                'features' => [
-                    'Everything in Professional',
-                    'One-on-one mentoring',
-                    'Custom study plans',
-                    'Exclusive masterclasses',
-                    '24/7 expert support',
-                    'Certification courses'
-                ],
-                'popular' => false
-            ]
-        ];
+                [
+                    'id' => 3,
+                    'name' => 'Premium',
+                    'price' => 149,
+                    'period' => 'month',
+                    'description' => 'Complete access for serious professionals',
+                    'features' => [
+                        'Everything in Professional',
+                        'One-on-one mentoring',
+                        'Custom study plans',
+                        'Exclusive masterclasses',
+                        '24/7 expert support',
+                        'Certification courses'
+                    ],
+                    'popular' => false
+                ]
+            ];
+        }
     }
 }
 ?>

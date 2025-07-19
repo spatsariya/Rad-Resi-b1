@@ -91,6 +91,8 @@ $currentPath = $_SERVER['REQUEST_URI'];
 						include __DIR__ . '/content/users-content.php';
 					} elseif ($basePath === '/admin/contacts') {
 						include __DIR__ . '/content/contacts-content.php';
+					} elseif ($basePath === '/admin/plans') {
+						include __DIR__ . '/content/plans-content.php';
 					} else {
 						// Default content for other pages
 						?>
