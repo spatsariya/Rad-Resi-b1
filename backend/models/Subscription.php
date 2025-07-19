@@ -162,6 +162,10 @@ class Subscription
             return $stmt->fetch(PDO::FETCH_ASSOC);
             
         } catch (PDOException $e) {
+            // Check if error is due to missing table
+            if (strpos($e->getMessage(), "doesn't exist") !== false || strpos($e->getMessage(), "Table") !== false) {
+                throw new Exception("Subscriptions table does not exist. Please run the database schema.");
+            }
             error_log("Find subscription by ID error: " . $e->getMessage());
             return null;
         }

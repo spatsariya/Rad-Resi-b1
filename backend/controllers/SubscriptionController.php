@@ -96,7 +96,7 @@ class SubscriptionController extends BaseController
     /**
      * Get subscription details
      */
-    public function getDetails()
+    public function getSubscriptionDetails()
     {
         if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_role'], ['admin', 'instructor'])) {
             $this->jsonResponse(['success' => false, 'message' => 'Unauthorized']);
@@ -109,18 +109,32 @@ class SubscriptionController extends BaseController
             return;
         }
         
-        $subscription = $this->subscriptionModel->findById($subscription_id);
-        if (!$subscription) {
-            $this->jsonResponse(['success' => false, 'message' => 'Subscription not found']);
-            return;
+        try {
+            $subscription = $this->subscriptionModel->findById($subscription_id);
+            if (!$subscription) {
+                $this->jsonResponse(['success' => false, 'message' => 'Subscription not found']);
+                return;
+            }
+            
+            // Decode plan features if they exist
+            if (!empty($subscription['plan_features'])) {
+                $subscription['plan_features'] = json_decode($subscription['plan_features'], true) ?? [];
+            } else {
+                $subscription['plan_features'] = [];
+            }
+            
+            $this->jsonResponse(['success' => true, 'subscription' => $subscription]);
+            
+        } catch (Exception $e) {
+            error_log("Get subscription details error: " . $e->getMessage());
+            
+            // Provide specific error messages
+            if (strpos($e->getMessage(), "Subscriptions table does not exist") !== false) {
+                $this->jsonResponse(['success' => false, 'message' => 'Subscriptions table not found. Please run the database schema first.']);
+            } else {
+                $this->jsonResponse(['success' => false, 'message' => 'Error loading subscription details: ' . $e->getMessage()]);
+            }
         }
-        
-        // Decode plan features if they exist
-        if (!empty($subscription['plan_features'])) {
-            $subscription['plan_features'] = json_decode($subscription['plan_features'], true) ?? [];
-        }
-        
-        $this->jsonResponse(['success' => true, 'subscription' => $subscription]);
     }
     
     /**
