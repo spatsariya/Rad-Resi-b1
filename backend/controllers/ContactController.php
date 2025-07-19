@@ -231,7 +231,7 @@ class ContactController extends BaseController {
     }
     
     private function getContactStatistics() {
-        $pdo = Database::getInstance()->getConnection();
+        $pdo = Database::getInstance()->connect();
         
         $stats = [];
         
@@ -259,14 +259,14 @@ class ContactController extends BaseController {
     }
     
     private function getContactGroups() {
-        $pdo = Database::getInstance()->getConnection();
+        $pdo = Database::getInstance()->connect();
         
         $stmt = $pdo->query("SELECT * FROM contact_groups ORDER BY name");
         return $stmt->fetchAll();
     }
     
     private function getRecipientList($criteria, $selected_contacts = []) {
-        $pdo = Database::getInstance()->getConnection();
+        $pdo = Database::getInstance()->connect();
         
         switch ($criteria) {
             case 'selected':
@@ -335,7 +335,7 @@ class ContactController extends BaseController {
     }
     
     private function logContactInteraction($user_id, $interaction_type, $metadata = []) {
-        $pdo = Database::getInstance()->getConnection();
+        $pdo = Database::getInstance()->connect();
         
         $stmt = $pdo->prepare("
             INSERT INTO contact_interactions (user_id, admin_id, interaction_type, metadata, created_at) 

@@ -4,7 +4,7 @@ class Message {
     private $pdo;
     
     public function __construct() {
-        $this->pdo = Database::getInstance()->getConnection();
+        $this->pdo = Database::getInstance()->connect();
     }
     
     public function createMessage($data) {
