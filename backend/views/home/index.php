@@ -7,13 +7,13 @@
 	<meta name="description" content="<?php echo $description ?? 'Advanced radiology education platform with comprehensive courses designed by leading radiologists'; ?>">
 	
 	<!-- Favicon -->
-	<link rel="icon" type="image/svg+xml" href="/backend/assets/svg/light-icon.svg">
-	<link rel="alternate icon" href="/backend/assets/svg/light-icon.svg">
+	<link rel="icon" type="image/svg+xml" href="/assets/svg/light-icon.svg">
+	<link rel="alternate icon" href="/assets/svg/light-icon.svg">
 	
 	<!-- Tailwind CSS -->
 	<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
 	<!-- Custom Logo Styles -->
-	<link rel="stylesheet" href="/backend/assets/css/logo-styles.css">
+	<link rel="stylesheet" href="/assets/css/logo-styles.css">
 	<!-- Alpine JS -->
 	<script type="module" src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"></script>
 	<script nomodule src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine-ie11.min.js" defer></script>
