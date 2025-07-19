@@ -744,7 +744,7 @@ function editNote(noteId) {
     document.getElementById('modalTitle').textContent = 'Edit Note';
     
     // Fetch note data
-    fetch(`/admin/notes/get/${noteId}`)
+    fetch(`/admin/notes/get-note-details?note_id=${noteId}`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
