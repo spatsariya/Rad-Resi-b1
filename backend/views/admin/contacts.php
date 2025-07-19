@@ -27,7 +27,7 @@
                             <h1 class="text-2xl font-semibold text-gray-900">Contact List</h1>
                         </div>
                         <div class="flex items-center space-x-4">
-                            <span class="text-sm text-gray-600">Welcome, <?php echo htmlspecialchars($_SESSION['user']['first_name']); ?></span>
+                            <span class="text-sm text-gray-600">Welcome, <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Admin'); ?></span>
                             <a href="/auth/logout" class="text-sm text-red-600 hover:text-red-800">Logout</a>
                         </div>
                     </div>

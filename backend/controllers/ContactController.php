@@ -6,17 +6,18 @@ class ContactController extends BaseController {
     
     public function __construct() {
         parent::__construct();
+        // Start session if not already started
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        // Require admin authentication
+        $this->requireAdminAuth();
+        
         $this->userModel = new User();
         $this->messageModel = new Message();
     }
     
     public function index() {
-        // Verify admin access
-        if (!$this->isAuthenticated() || $_SESSION['user']['role'] !== 'admin') {
-            $this->redirect('/admin/login');
-            return;
-        }
-        
         // Get filter parameters
         $search = trim($_GET['search'] ?? '');
         $role_filter = $_GET['role_filter'] ?? '';
@@ -66,7 +67,7 @@ class ContactController extends BaseController {
     }
     
     public function getUserInfo() {
-        if (!$this->isAuthenticated() || $_SESSION['user']['role'] !== 'admin') {
+        if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_role'], ['admin', 'instructor'])) {
             $this->jsonResponse(['success' => false, 'message' => 'Unauthorized']);
             return;
         }
@@ -87,7 +88,7 @@ class ContactController extends BaseController {
     }
     
     public function sendMessage() {
-        if (!$this->isAuthenticated() || $_SESSION['user']['role'] !== 'admin') {
+        if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_role'], ['admin', 'instructor'])) {
             $this->jsonResponse(['success' => false, 'message' => 'Unauthorized']);
             return;
         }
@@ -116,7 +117,7 @@ class ContactController extends BaseController {
         
         try {
             $message_id = $this->messageModel->createMessage([
-                'sender_id' => $_SESSION['user']['id'],
+                'sender_id' => $_SESSION['user_id'],
                 'recipient_id' => $user_id,
                 'subject' => $subject,
                 'message' => $message,
@@ -146,7 +147,7 @@ class ContactController extends BaseController {
     }
     
     public function sendBulkMessage() {
-        if (!$this->isAuthenticated() || $_SESSION['user']['role'] !== 'admin') {
+        if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_role'], ['admin', 'instructor'])) {
             $this->jsonResponse(['success' => false, 'message' => 'Unauthorized']);
             return;
         }
@@ -181,7 +182,7 @@ class ContactController extends BaseController {
         foreach ($recipient_users as $recipient) {
             try {
                 $message_id = $this->messageModel->createMessage([
-                    'sender_id' => $_SESSION['user']['id'],
+                    'sender_id' => $_SESSION['user_id'],
                     'recipient_id' => $recipient['id'],
                     'subject' => $subject,
                     'message' => $message,
@@ -215,7 +216,7 @@ class ContactController extends BaseController {
     }
     
     public function getHistory() {
-        if (!$this->isAuthenticated() || $_SESSION['user']['role'] !== 'admin') {
+        if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_role'], ['admin', 'instructor'])) {
             $this->jsonResponse(['success' => false, 'message' => 'Unauthorized']);
             return;
         }
@@ -344,9 +345,17 @@ class ContactController extends BaseController {
         
         return $stmt->execute([
             $user_id,
-            $_SESSION['user']['id'],
+            $_SESSION['user_id'],
             $interaction_type,
             json_encode($metadata)
         ]);
+    }
+    
+    private function requireAdminAuth()
+    {
+        if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_role'], ['admin', 'instructor'])) {
+            $this->redirect('/login');
+            exit;
+        }
     }
 }
