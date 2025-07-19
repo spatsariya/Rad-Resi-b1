@@ -126,33 +126,24 @@ class AuthController extends BaseController
             return;
         }
         
-        // Debug session and CSRF information
-        $debugInfo = [
-            'session_id' => session_id(),
-            'session_status' => session_status(),
-            'session_csrf_token' => $_SESSION['csrf_token'] ?? 'NOT SET',
-            'post_csrf_token' => $_POST['csrf_token'] ?? 'NOT SET',
-            'all_session_data' => $_SESSION,
-            'all_post_data' => $_POST
-        ];
-        
-        // Log debug info
-        error_log("Registration Debug: " . json_encode($debugInfo));
-        
-        // Validate CSRF token
-        if (!$this->validateCSRF()) {
-            // Add more detailed error for debugging
-            $token = $_POST['csrf_token'] ?? 'missing';
-            $sessionToken = $_SESSION['csrf_token'] ?? 'missing';
-            error_log("CSRF validation failed. POST token: " . substr($token, 0, 10) . "..., Session token: " . substr($sessionToken, 0, 10) . "...");
-            
-            // Include debug info in response for testing
+        try {
+            // Test response first
             $this->jsonResponse([
-                'error' => 'Invalid CSRF token. Please refresh the page and try again.',
-                'debug' => $debugInfo  // Remove this in production
-            ], 403);
+                'success' => false,
+                'error' => 'Test response - server is working',
+                'debug' => [
+                    'session_id' => session_id(),
+                    'post_data' => $_POST,
+                    'csrf_token_received' => $_POST['csrf_token'] ?? 'missing'
+                ]
+            ]);
             return;
+            
+        } catch (Exception $e) {
+            error_log("Registration error: " . $e->getMessage());
+            $this->jsonResponse(['error' => 'Registration failed. Please try again.'], 500);
         }
+    }
         
         $firstName = filter_input(INPUT_POST, 'first_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $lastName = filter_input(INPUT_POST, 'last_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
