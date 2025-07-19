@@ -108,6 +108,14 @@ class NotesChapterController extends BaseController
         
         try {
             error_log("Getting chapter details for ID: " . $chapter_id);
+            
+            // First check if table exists
+            if (!$this->notesChapterModel->checkTable()) {
+                error_log("Notes chapters table does not exist");
+                $this->jsonResponse(['success' => false, 'message' => 'Notes chapters table not found. Please run the database schema first.']);
+                return;
+            }
+            
             $chapter = $this->notesChapterModel->findById($chapter_id);
             error_log("Chapter details result: " . json_encode($chapter));
             
@@ -125,6 +133,8 @@ class NotesChapterController extends BaseController
             // Provide specific error messages
             if (strpos($e->getMessage(), "Notes chapters table does not exist") !== false) {
                 $this->jsonResponse(['success' => false, 'message' => 'Notes chapters table not found. Please run the database schema first.']);
+            } elseif (strpos($e->getMessage(), "doesn't exist") !== false) {
+                $this->jsonResponse(['success' => false, 'message' => 'Database table error. Please check your database schema.']);
             } else {
                 $this->jsonResponse(['success' => false, 'message' => 'Error loading chapter details: ' . $e->getMessage()]);
             }

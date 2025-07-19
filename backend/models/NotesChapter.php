@@ -320,7 +320,7 @@ class NotesChapter
     {
         try {
             $sql = "SELECT MAX(display_order) as max_order FROM notes_chapters";
-            $result = $this->db->fetch($sql);
+            $result = $this->db->fetch($sql, []);
             return $result['max_order'] ?? 0;
         } catch (Exception $e) {
             return 0;
@@ -336,23 +336,23 @@ class NotesChapter
             $stats = [];
             
             // Total chapters
-            $result = $this->db->fetch("SELECT COUNT(*) as count FROM notes_chapters");
+            $result = $this->db->fetch("SELECT COUNT(*) as count FROM notes_chapters", []);
             $stats['total_chapters'] = $result['count'] ?? 0;
             
             // Active chapters
-            $result = $this->db->fetch("SELECT COUNT(*) as count FROM notes_chapters WHERE status = 'active'");
+            $result = $this->db->fetch("SELECT COUNT(*) as count FROM notes_chapters WHERE status = 'active'", []);
             $stats['active_chapters'] = $result['count'] ?? 0;
             
             // Inactive chapters
-            $result = $this->db->fetch("SELECT COUNT(*) as count FROM notes_chapters WHERE status = 'inactive'");
+            $result = $this->db->fetch("SELECT COUNT(*) as count FROM notes_chapters WHERE status = 'inactive'", []);
             $stats['inactive_chapters'] = $result['count'] ?? 0;
             
             // Chapters with thumbnails
-            $result = $this->db->fetch("SELECT COUNT(*) as count FROM notes_chapters WHERE thumbnail_image IS NOT NULL AND thumbnail_image != ''");
+            $result = $this->db->fetch("SELECT COUNT(*) as count FROM notes_chapters WHERE thumbnail_image IS NOT NULL AND thumbnail_image != ''", []);
             $stats['chapters_with_thumbnails'] = $result['count'] ?? 0;
             
             // Unique chapter names
-            $result = $this->db->fetch("SELECT COUNT(DISTINCT chapter_name) as count FROM notes_chapters");
+            $result = $this->db->fetch("SELECT COUNT(DISTINCT chapter_name) as count FROM notes_chapters", []);
             $stats['unique_chapters'] = $result['count'] ?? 0;
             
             return $stats;
