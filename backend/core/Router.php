@@ -294,17 +294,25 @@ class Router {
     private function authMiddleware() {
         if (!isset($_SESSION['user_id'])) {
             // Check if this is an API request (expecting JSON)
+            $requestUri = $_SERVER['REQUEST_URI'] ?? '';
             $acceptHeader = $_SERVER['HTTP_ACCEPT'] ?? '';
             $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
-            $isApiRequest = strpos($acceptHeader, 'application/json') !== false || 
-                           strpos($contentType, 'application/json') !== false ||
-                           strpos($_SERVER['REQUEST_URI'], '/admin/') !== false && 
-                           (strpos($_SERVER['REQUEST_URI'], '/get-') !== false || 
-                            strpos($_SERVER['REQUEST_URI'], '/create') !== false ||
-                            strpos($_SERVER['REQUEST_URI'], '/update') !== false ||
-                            strpos($_SERVER['REQUEST_URI'], '/delete') !== false);
+            
+            // More specific detection for API endpoints
+            $isApiRequest = (
+                strpos($acceptHeader, 'application/json') !== false || 
+                strpos($contentType, 'application/json') !== false ||
+                strpos($requestUri, '/get-') !== false || 
+                strpos($requestUri, '/create') !== false ||
+                strpos($requestUri, '/update') !== false ||
+                strpos($requestUri, '/delete') !== false ||
+                strpos($requestUri, '/api/') !== false
+            );
+            
+            error_log("Auth middleware - Request URI: $requestUri, Is API: " . ($isApiRequest ? 'yes' : 'no'));
             
             if ($isApiRequest) {
+                ob_clean(); // Clear any previous output
                 header('Content-Type: application/json');
                 http_response_code(401);
                 echo json_encode(['success' => false, 'message' => 'Authentication required']);

@@ -391,24 +391,43 @@ class NotesChapterController extends BaseController
      */
     public function getMainChapters()
     {
+        // Prevent any output before JSON response
+        ob_clean();
+        
         // Add headers for proper JSON response
         header('Content-Type: application/json');
-        
-        if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_role'], ['admin', 'instructor'])) {
-            error_log("Unauthorized access to getMainChapters - Session data: " . print_r($_SESSION, true));
-            $this->jsonResponse(['success' => false, 'message' => 'Unauthorized']);
-            return;
-        }
+        header('Cache-Control: no-cache, must-revalidate');
         
         try {
-            error_log("Getting main chapters...");
+            // Check authentication
+            if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_role'], ['admin', 'instructor'])) {
+                error_log("Unauthorized access to getMainChapters - Session data: " . print_r($_SESSION, true));
+                echo json_encode(['success' => false, 'message' => 'Unauthorized access']);
+                exit;
+            }
+            
+            error_log("Getting main chapters for user ID: " . $_SESSION['user_id']);
+            
+            // Get chapters
             $chapters = $this->notesChapterModel->getMainChapters();
             error_log("Found " . count($chapters) . " main chapters");
-            $this->jsonResponse(['success' => true, 'chapters' => $chapters]);
+            
+            // Return successful response
+            echo json_encode(['success' => true, 'chapters' => $chapters]);
+            exit;
             
         } catch (Exception $e) {
             error_log("Get main chapters error: " . $e->getMessage());
-            $this->jsonResponse(['success' => false, 'message' => 'Error loading main chapters: ' . $e->getMessage()]);
+            error_log("Stack trace: " . $e->getTraceAsString());
+            
+            echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+            exit;
+        } catch (Error $e) {
+            error_log("Get main chapters fatal error: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            
+            echo json_encode(['success' => false, 'message' => 'Server error: ' . $e->getMessage()]);
+            exit;
         }
     }
 }

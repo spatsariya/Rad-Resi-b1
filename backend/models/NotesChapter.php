@@ -435,10 +435,14 @@ class NotesChapter
     public function getMainChapters()
     {
         try {
+            error_log("NotesChapter::getMainChapters - Starting query");
+            
             // First check if parent_id column exists
             $columns = $this->db->query("SHOW COLUMNS FROM notes_chapters LIKE 'parent_id'");
+            error_log("Parent_id column check result: " . json_encode($columns));
             
             if (empty($columns)) {
+                error_log("Parent_id column doesn't exist, using fallback query");
                 // If parent_id column doesn't exist, return all chapters
                 $sql = "
                     SELECT 
@@ -450,6 +454,7 @@ class NotesChapter
                     ORDER BY display_order ASC, chapter_name ASC
                 ";
             } else {
+                error_log("Parent_id column exists, using hierarchical query");
                 // If parent_id column exists, filter by it
                 $sql = "
                     SELECT 
@@ -463,13 +468,19 @@ class NotesChapter
                 ";
             }
             
-            return $this->db->query($sql);
+            error_log("Executing SQL: " . $sql);
+            $result = $this->db->query($sql);
+            error_log("Query result: " . json_encode($result));
+            
+            return $result;
             
         } catch (Exception $e) {
             error_log("Get main chapters error: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
             
             // If there's still an error, try a basic query without parent_id
             try {
+                error_log("Attempting fallback query without parent_id");
                 $sql = "
                     SELECT 
                         id,
@@ -479,7 +490,9 @@ class NotesChapter
                     WHERE status = 'active'
                     ORDER BY display_order ASC, chapter_name ASC
                 ";
-                return $this->db->query($sql);
+                $result = $this->db->query($sql);
+                error_log("Fallback query result: " . json_encode($result));
+                return $result;
             } catch (Exception $e2) {
                 error_log("Fallback query also failed: " . $e2->getMessage());
                 throw new Exception("Error getting main chapters: " . $e2->getMessage());

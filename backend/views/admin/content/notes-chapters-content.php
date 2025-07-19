@@ -599,14 +599,28 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => {
                 console.log('Response status:', response.status);
                 console.log('Response headers:', response.headers);
+                console.log('Response URL:', response.url);
                 
-                // Check if response is JSON
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    throw new Error('Expected JSON but got ' + contentType);
-                }
-                
-                return response.json();
+                // Get the response text first to see what we're actually getting
+                return response.text().then(text => {
+                    console.log('Raw response text:', text);
+                    
+                    // Check if response is JSON
+                    const contentType = response.headers.get('content-type');
+                    console.log('Content-Type:', contentType);
+                    
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error('Expected JSON but got ' + contentType + '. Response: ' + text.substring(0, 100));
+                    }
+                    
+                    try {
+                        return JSON.parse(text);
+                    } catch (parseError) {
+                        console.error('JSON parse error:', parseError);
+                        console.error('Response text that failed to parse:', text);
+                        throw new Error('Invalid JSON response: ' + text.substring(0, 100));
+                    }
+                });
             })
             .then(data => {
                 console.log('API Response:', data);
