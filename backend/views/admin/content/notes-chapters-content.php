@@ -588,9 +588,24 @@ document.addEventListener('DOMContentLoaded', function() {
     function loadParentChapters() {
         console.log('Loading parent chapters...');
         // Load only main chapters (those without parent_id) for the dropdown
-        fetch('/admin/notes-chapters/get-main-chapters')
+        fetch('/admin/notes-chapters/get-main-chapters', {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
             .then(response => {
                 console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Expected JSON but got ' + contentType);
+                }
+                
                 return response.json();
             })
             .then(data => {
@@ -600,19 +615,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (data.success && data.chapters) {
                     console.log('Found', data.chapters.length, 'chapters');
-                    data.chapters.forEach(chapter => {
-                        const option = document.createElement('option');
-                        option.value = chapter.id;
-                        option.textContent = chapter.chapter_name;
-                        parentSelect.appendChild(option);
-                    });
+                    if (data.chapters.length === 0) {
+                        parentSelect.innerHTML += '<option value="" disabled>No chapters available</option>';
+                    } else {
+                        data.chapters.forEach(chapter => {
+                            const option = document.createElement('option');
+                            option.value = chapter.id;
+                            option.textContent = chapter.chapter_name;
+                            parentSelect.appendChild(option);
+                        });
+                    }
                 } else {
                     console.error('API returned error:', data.message);
+                    parentSelect.innerHTML += '<option value="" disabled>Error loading chapters</option>';
                     alert('Error loading parent chapters: ' + (data.message || 'Unknown error'));
                 }
             })
             .catch(error => {
                 console.error('Error loading parent chapters:', error);
+                const parentSelect = document.getElementById('parentChapter');
+                parentSelect.innerHTML = '<option value="">Select Parent Chapter</option><option value="" disabled>Error loading chapters</option>';
                 alert('Error loading parent chapters: ' + error.message);
             });
     }

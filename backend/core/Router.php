@@ -293,8 +293,26 @@ class Router {
      */
     private function authMiddleware() {
         if (!isset($_SESSION['user_id'])) {
-            header('Location: /login');
-            exit;
+            // Check if this is an API request (expecting JSON)
+            $acceptHeader = $_SERVER['HTTP_ACCEPT'] ?? '';
+            $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+            $isApiRequest = strpos($acceptHeader, 'application/json') !== false || 
+                           strpos($contentType, 'application/json') !== false ||
+                           strpos($_SERVER['REQUEST_URI'], '/admin/') !== false && 
+                           (strpos($_SERVER['REQUEST_URI'], '/get-') !== false || 
+                            strpos($_SERVER['REQUEST_URI'], '/create') !== false ||
+                            strpos($_SERVER['REQUEST_URI'], '/update') !== false ||
+                            strpos($_SERVER['REQUEST_URI'], '/delete') !== false);
+            
+            if ($isApiRequest) {
+                header('Content-Type: application/json');
+                http_response_code(401);
+                echo json_encode(['success' => false, 'message' => 'Authentication required']);
+                exit;
+            } else {
+                header('Location: /login');
+                exit;
+            }
         }
         return true;
     }

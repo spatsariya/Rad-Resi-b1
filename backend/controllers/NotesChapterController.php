@@ -391,7 +391,11 @@ class NotesChapterController extends BaseController
      */
     public function getMainChapters()
     {
+        // Add headers for proper JSON response
+        header('Content-Type: application/json');
+        
         if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_role'], ['admin', 'instructor'])) {
+            error_log("Unauthorized access to getMainChapters - Session data: " . print_r($_SESSION, true));
             $this->jsonResponse(['success' => false, 'message' => 'Unauthorized']);
             return;
         }
