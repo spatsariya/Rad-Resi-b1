@@ -156,7 +156,15 @@ class Router {
         $this->get('/admin/banners', 'AdminController@banners', ['auth']);
         $this->get('/admin/blogs', 'AdminController@blogs', ['auth']);
         $this->get('/admin/testimonials', 'AdminController@testimonials', ['auth']);
-        $this->get('/admin/plans', 'AdminController@plans', ['auth']);
+        
+        // Plans Management
+        $this->get('/admin/plans', 'PlanController@index', ['auth']);
+        $this->post('/admin/plans/create', 'PlanController@create', ['auth']);
+        $this->post('/admin/plans/update', 'PlanController@update', ['auth']);
+        $this->post('/admin/plans/delete', 'PlanController@delete', ['auth']);
+        $this->get('/admin/plans/get-details', 'PlanController@getPlanDetails', ['auth']);
+        $this->post('/admin/plans/update-order', 'PlanController@updateOrder', ['auth']);
+        
         $this->get('/admin/subscriptions', 'AdminController@subscriptions', ['auth']);
         $this->get('/admin/faq', 'AdminController@faq', ['auth']);
         $this->get('/admin/reports', 'AdminController@reports', ['auth']);
