@@ -15,10 +15,14 @@ class NotesChapter
     public function checkTable()
     {
         try {
+            error_log("NotesChapter::checkTable - Checking if notes_chapters table exists");
             $stmt = $this->db->query("SHOW TABLES LIKE 'notes_chapters'");
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return !empty($result);
+            $exists = !empty($result);
+            error_log("NotesChapter::checkTable - Table exists: " . ($exists ? 'YES' : 'NO'));
+            return $exists;
         } catch (Exception $e) {
+            error_log("NotesChapter::checkTable - Error: " . $e->getMessage());
             return false;
         }
     }
@@ -127,16 +131,32 @@ class NotesChapter
     public function findById($id)
     {
         try {
-            // First check if parent_id column exists
+            error_log("NotesChapter::findById - Starting for ID: " . $id);
+            
+            // First check if the table exists at all
+            $stmt = $this->db->query("SHOW TABLES LIKE 'notes_chapters'");
+            $tables = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            if (empty($tables)) {
+                error_log("NotesChapter::findById - notes_chapters table does not exist");
+                throw new Exception("Notes chapters table does not exist. Please run the database schema.");
+            }
+            
+            error_log("NotesChapter::findById - Table exists, checking for parent_id column");
+            
+            // Check if parent_id column exists
             $stmt = $this->db->query("SHOW COLUMNS FROM notes_chapters LIKE 'parent_id'");
             $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            error_log("NotesChapter::findById - Parent_id column check: " . json_encode($columns));
             
             if (empty($columns)) {
                 // If parent_id column doesn't exist, select without it
                 $sql = "SELECT id, chapter_name, sub_chapter_name, description, thumbnail_image, display_order, status, created_at, updated_at FROM notes_chapters WHERE id = :id";
+                error_log("NotesChapter::findById - Using query without parent_id: " . $sql);
             } else {
                 // If parent_id column exists, include it in the selection
                 $sql = "SELECT * FROM notes_chapters WHERE id = :id";
+                error_log("NotesChapter::findById - Using query with parent_id: " . $sql);
             }
             
             $stmt = $this->db->prepare($sql);
@@ -144,21 +164,29 @@ class NotesChapter
             $stmt->execute();
             
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            error_log("NotesChapter::findById - Query result: " . json_encode($result));
             
             // If parent_id column doesn't exist, add it as null for consistency
             if (empty($columns) && $result) {
                 $result['parent_id'] = null;
+                error_log("NotesChapter::findById - Added null parent_id to result");
             }
             
             return $result;
             
         } catch (PDOException $e) {
+            error_log("NotesChapter::findById - PDOException: " . $e->getMessage());
+            error_log("NotesChapter::findById - Stack trace: " . $e->getTraceAsString());
+            
             // Check if error is due to missing table
             if (strpos($e->getMessage(), "doesn't exist") !== false || strpos($e->getMessage(), "Table") !== false) {
                 throw new Exception("Notes chapters table does not exist. Please run the database schema.");
             }
-            error_log("Find chapter by ID error: " . $e->getMessage());
-            return null;
+            throw new Exception("Database error: " . $e->getMessage());
+        } catch (Exception $e) {
+            error_log("NotesChapter::findById - General Exception: " . $e->getMessage());
+            error_log("NotesChapter::findById - Stack trace: " . $e->getTraceAsString());
+            throw $e;
         }
     }
     
